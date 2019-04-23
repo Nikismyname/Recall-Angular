@@ -1,0 +1,18 @@
+<div *ngIf="(currentDir$ | async) as currentDir">
+    <div class="row">
+        <div class="col-3 mt-2">
+            <!-- PARENT SHEET -->
+            <app-current-dir
+                [currentDir]="currentDir"
+                (currentSheetClickedEmitter)="onClickCurrentSheet($event)"
+            ></app-current-dir>
+            <!-- SHEET CHILDREN  -->
+            <app-dir-list
+            ></app-dir-list>
+        </div> 
+        <div class="col-9">
+            <app-all-videos
+            ></app-all-videos>
+        </div>
+    </div>
+</div>

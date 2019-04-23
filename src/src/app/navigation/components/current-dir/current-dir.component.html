@@ -1,0 +1,9 @@
+<div (click)="onClickCurrentSheet($event)">
+  <div class="card mb-2" style="border: 3px solid rgba(0, 0, 0, 0.6)">
+    <div class="card-body">
+      <h6 class="card-title">{{currentDir.name}}</h6>
+          <a (click)="stopPropagation($event)" [routerLink]="routePaths.loginPath">Start Video Notes</a> <br />
+          <a (click)="stopPropagation($event)" [routerLink]="routePaths.loginPath">Create Directory</a> <br />
+    </div>
+  </div>
+</div>

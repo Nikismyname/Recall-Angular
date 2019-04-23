@@ -1,0 +1,87 @@
+<div class="row" *ngIf="loaded">
+
+  <div class="col-8">
+
+    <div class="text-center mb-4 offset-3 col-9">
+      <h1>{{formData.formName}}</h1>
+    </div>
+
+    <form [formGroup]="form" (submit)="onSubmit()">
+
+      <div *ngFor="let input of formData.inputData">
+        <div class="row">
+          <label class="col-3 col-form-label text-right">{{input.displayName}}</label>
+          <div class="col-9">
+            
+            <input 
+              [attr.disabled]="formData.isDisabled? '': null"
+              formControlName="{{input.name}}"
+              class="form-control-black mb-4" 
+              type="{{input.type}}" 
+            />
+            
+            <!-- <div 
+              class="Server-Errors alert alert-danger"
+              *ngFor="let error of input.errors"
+            >{{error}}</div> -->
+            <div class="Client Side Validations">
+              <div 
+                class="Required-Error-Handling alert alert-warning"
+                *ngIf="controls[input.name]?.hasError('required') && controls[input.name].touched">
+                This field is required!
+              </div>
+              <div 
+                class="Min-Error-Handling alert alert-warning"
+                *ngIf="controls[input.name]?.hasError('min') && controls[input.name].touched">
+                {{input.messages['min']}}
+              </div>
+              <div 
+                class="Max-Error-Handling alert alert-warning"
+                *ngIf="controls[input.name]?.hasError('max') && controls[input.name].touched">
+                {{input.messages['max']}}
+              </div>
+              <div 
+                class="MinLength-Error-Handling alert alert-warning"
+                *ngIf="controls[input.name]?.hasError('minlength') && controls[input.name].touched">
+                {{input.messages['minLength']}}
+              </div>
+              <div 
+                class="Passwords-maching alert alert-warning"
+                *ngIf="input.name==='repeatPassword'&&controls['password'].touched&&controls['repeatPassword'].value!==controls['password'].value">
+                Passwords must match!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="offset-3 col-9">
+        <div style="display: flex; justify-content: center">
+
+          <div style="transform: translateX(-56%)" class="bottom-fixed pb-4 pt-4">
+            <button 
+              *ngIf="formData.submitButtonName !== 'Delete'"
+              class="btn btn-success" 
+              [disabled]="form.invalid"
+              type="submit">{{formData.submitButtonName}}</button>
+              <button 
+              *ngIf="formData.submitButtonName === 'Delete'"
+              class="btn btn-danger" 
+              [disabled]="form.invalid"
+              type="submit">{{formData.submitButtonName}}</button>
+          </div>
+
+          <div style="transform: translateX(56%)" class="bottom-fixed pb-4 pt-4">
+            <button class="btn btn-warning" type="button" (click)="onClickBack()">Back</button>
+          </div>
+
+        </div>
+      </div>
+
+    </form>
+
+    <!-- apacing for the buttons to fit down on the page -->
+    <div class="pt-5 pb-5"></div>
+
+  </div>
+</div>

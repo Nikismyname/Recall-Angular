@@ -1,0 +1,22 @@
+import { NgModule } from "@angular/core"; 
+import { RouterModule, Routes } from '@angular/router';
+import { RoutesNoSlash, forFeatureRouting } from '../services/route-paths'; 
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+
+const routes: Routes = [
+    {
+        path: forFeatureRouting(RoutesNoSlash.loginPath),
+        component: LoginComponent
+    },
+    {
+        path: forFeatureRouting(RoutesNoSlash.registerPath),
+        component: RegisterComponent
+    },
+]
+
+@NgModule({
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
+})
+export class AuthenticationRoutingModule{ }
