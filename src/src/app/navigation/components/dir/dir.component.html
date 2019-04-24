@@ -1,3 +1,7 @@
-<p>
-  dir works!
-</p>
+<div (click)="onClickDir($event)" class="card mb-2" style="border: 3px solid rgba(100, 100, 100, 0.6)">
+  <div class="card-body">
+    <h6 className="card-title">{{dir.name}}</h6>
+    <a (click)="stopPropagation($event)" [routerLink]="[routePaths.loginPath]">Delete</a>
+    <a (click)="stopPropagation($event)" [routerLink]="[routePaths.loginPath]"class="ml-2">Edit</a>
+  </div>
+</div>

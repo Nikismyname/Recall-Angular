@@ -1,3 +1,11 @@
-<p>
-  dir-list works!
-</p>
+<div cdkDropList (cdkDropListDropped)="onDropped($event)">
+  <ng-template ngFor let-dir [ngForOf]="dirs">
+    <div cdkDrag>
+      <div class="box-custom-placeholder" *cdkDragPlaceholder></div>
+      <app-dir
+        [dir]="dir" 
+        (dirClickedEmitter)="onDirClicked($event)">
+      </app-dir>
+    </div>
+  </ng-template>
+</div>

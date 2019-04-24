@@ -1,4 +1,5 @@
 import { IVideoIndex } from './video-index';
+import { IDirChildIndex } from './dir-child-index';
 
 export interface INavIndex { 
 
@@ -9,6 +10,8 @@ export interface INavIndex {
     order: number; 
 
     parentDirectoryId: number; 
+
+    subdirectories: IDirChildIndex[], 
 
     videos: IVideoIndex[]; 
 }

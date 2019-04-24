@@ -19,7 +19,7 @@ export class BindingFormComponent implements OnInit {
     private fb: FormBuilder,
     private location: Location,
   ) { }
-
+ 
   ngOnInit() {
     let formControlsGroup = {};
     for (let i = 0; i < this.formData.inputData.length; i++) {

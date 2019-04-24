@@ -5,7 +5,7 @@ import { NavigationComponent } from './components/navigation/navigation.componen
 
 const routes: Routes = [
     {
-        path: forFeatureRouting(RoutesNoSlash.videosPath)+ "/:id",
+        path: forFeatureRouting(RoutesNoSlash.indexPath)+ "/:id",
         component: NavigationComponent,
     }
 ]

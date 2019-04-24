@@ -26,7 +26,7 @@ export class NavigationComponent {
   ngOnInit() {
   }
 
-  onClickCurrentSheet(id) {
+  onClickDir(id) {
     this.navService.setNav(id);
   }
 

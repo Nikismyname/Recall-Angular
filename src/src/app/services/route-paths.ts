@@ -4,7 +4,11 @@ export namespace RoutesNoSlash {
     export const loginPath = "auth/login";
     export const registerPath = "auth/register"; 
 
-    export const videosPath = "nav/videos";
+    export const indexPath = "nav/index";
+
+    export const videoCreatePath = "video/create";
+    export const videoNotePath = "video/note";
+    export const videoSearchPath = "video/search";
 }
 
 @Injectable({
@@ -14,7 +18,11 @@ export class RoutePaths {
     public loginPath = "/" + RoutesNoSlash.loginPath; 
     public registerPath = "/" + RoutesNoSlash.registerPath;  
 
-    public videosPath = "/"+RoutesNoSlash.videosPath; 
+    public indexPath = "/" + RoutesNoSlash.indexPath; 
+    
+    public videoCreatePath = "/" +RoutesNoSlash.videoCreatePath;
+    public videoNotePath= "/" +RoutesNoSlash.videoNotePath;
+    public videoSearchPath= "/" +RoutesNoSlash.videoSearchPath;
 }
 
 export function forFeatureRouting(path: string) {

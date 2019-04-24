@@ -4,10 +4,12 @@
             <!-- PARENT SHEET -->
             <app-current-dir
                 [currentDir]="currentDir"
-                (currentSheetClickedEmitter)="onClickCurrentSheet($event)"
+                (currentDirClickedEmitter)="onClickDir($event)"
             ></app-current-dir>
             <!-- SHEET CHILDREN  -->
             <app-dir-list
+            [dirs]="currentDir.subdirectories"
+            (onClickDirEmitter)="onClickDir($event)"
             ></app-dir-list>
         </div> 
         <div class="col-9">
