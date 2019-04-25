@@ -5,7 +5,7 @@ import { CreateVideoComponent } from './components/create-video/create-video.com
 
 const routes: Routes = [
     {
-        path: forFeatureRouting(RoutesNoSlash.videoCreatePath),
+        path: forFeatureRouting(RoutesNoSlash.videoCreatePath+ "/:id"),
         component: CreateVideoComponent,
     }
 ];

@@ -20,7 +20,7 @@ export class UrlService {
       } else {
           let regex = /\.be\/(.+?)(?:$|\?)/;
           let match = regex.exec(url);
-          if (match.length === 0) {
+          if (!match) {
               return null;
           }
           videoToken = match[1];

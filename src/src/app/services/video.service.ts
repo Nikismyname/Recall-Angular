@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { INavIndex } from './models/navigation/nav-index';
+import { IVideoCreate } from './models/video/video-create';
 
 @Injectable({
     providedIn: 'root'
 })
-export class NavigationService {
+export class VideoService {
 
     constructor(
         private http: HttpClient
     ) {}
 
-    getIndex = (id: number) => { 
-        return this.http.get<INavIndex>("Navigation/GetIndex/"+id);
+    create = (data: IVideoCreate) => { 
+        return this.http.post<INavIndex>("Video/Create", JSON.stringify(data));
     }
 }
