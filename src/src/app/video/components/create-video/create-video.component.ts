@@ -1,9 +1,12 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { IVideoCreate } from 'src/app/services/models/video/video-create';
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { UrlService } from 'src/app/services/url.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { VideoService } from 'src/app/services/video.service';
+import { take } from 'rxjs/operators';
+import { RoutesNoSlash } from '../../../services/route-paths'; 
 
 @Component({
   selector: 'app-create-video',
@@ -27,44 +30,20 @@ export class CreateVideoComponent {
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
+    private router: Router,
     private urlService: UrlService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private videoService: VideoService,
   ) {
     this.dirId = Number(this.route.snapshot.paramMap.get("id"));
     this.form = this.fb.group({
       name: ["", [Validators.required, Validators.minLength(2)]],
-      url: [""],
+      url: ["",[Validators.required, this.urlValidator]],
       description: [""],
-      videoType: [""],
+      videoType: ["", Validators.required],
     });
+    this.form.patchValue({ videoType: "YouTube" });
     this.setValidators();
-  }
-
-  urlValid = (c: FormControl) => {
-
-    if (!this.form) { 
-      console.log("No Form Yet");
-      return { validationError: true };
-    };
-
-    if (this.form.controls.videoType.value !== "YouTube") {
-      console.log("Not YouTube Pass");
-      return null;
-    } else if (c.value.length === 0) { 
-      console.log("YouTube + length 0 Fail");
-      return { validationError: true };
-    }
-    let token = this.urlService.extractToken(c.value);
-    if (token !== null && token.length !== 0) {
-      console.log("token present Pass");
-      return null;
-    }
-    console.log("token not present Fail");
-    return { validationError: true };
-  }
-
-  savePlayer(player: YT.Player) {
-    this.player = player;
   }
 
   onClickPlay() {
@@ -82,14 +61,39 @@ export class CreateVideoComponent {
   onSubmit() {
     let submitData: IVideoCreate = <IVideoCreate>this.form.value;
     submitData.directoryId = this.dirId;
-    console.log(submitData);
+    submitData.isLocal = this.form.controls.videoType.value === "Local";
+    submitData.isYouTube = this.form.controls.videoType.value === "YouTube";
+    submitData.isVimeo = this.form.controls.videoType.value === "Vimeo";
+    let bools = [submitData.isLocal, submitData.isVimeo, submitData.isYouTube];
+    if (bools.filter(x => x).length !== 1) {
+      alert("Video Type Error!");
+      return;
+    }
+    delete submitData["videoType"];
+    
+    this.videoService.create(submitData).pipe(take(1)).subscribe(
+      () => { 
+        this.router.navigate([RoutesNoSlash.indexPath + "/" + this.dirId]); 
+      }, 
+      error => { 
+        console.log(error);
+      }
+    );
   }
 
-  onVideoTypeSelected() {
-    this.form.controls.url.updateValueAndValidity();
-    console.log("Here");
+  urlValidator = (c: FormControl) => {
+    let token = this.urlService.extractToken(c.value);
+    if (token !== null && token.length !== 0) {
+      console.log("token present Pass");
+      return null;
+    }
+    console.log("token not present Fail");
+    return { validationError: true };
   }
 
+  savePlayer(player: YT.Player) {
+    this.player = player;
+  }
   setValidators() {
     const urlControl = this.form.get('url');
 
@@ -97,7 +101,7 @@ export class CreateVideoComponent {
       .subscribe(value => {
 
         if (value === 'YouTube') {
-          urlControl.setValidators([Validators.required]);
+          urlControl.setValidators([Validators.required, this.urlValidator]);
         } else {
           urlControl.setValidators(null);
         }
@@ -106,18 +110,8 @@ export class CreateVideoComponent {
       });
   }
 
-  onFileSelected(e) {
-    let file = e.target.files[0];
-    if (file) {
-      console.log(file);
-      localStorage.setItem("file", JSON.stringify(file));
-      let objectUrl: string = window.URL.createObjectURL(file);
-      this.localVidStringSrc = objectUrl;
-      this.localVidSrc = this.domSanitizer.bypassSecurityTrustUrl(objectUrl);
-      this.sources = [];
-      this.sources.push(this.localVidSrc);
-      this.loaded = true;
-    }
+  get c() {
+    return this.form.controls;
   }
 
 }

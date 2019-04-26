@@ -1,0 +1,18 @@
+<div class="note-border outer-text-box">
+  <div style="display:flex">
+    <div 
+      [innerHTML]="note.content"
+      [ngClass]="{'on-focus': note.shouldExpand, 'on-blur': !note.shouldExpand}"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      style="width: 100%; outline: 0px solid transparent"
+      class="inner-text-box"
+      contenteditable="true"
+    ></div>
+    <button
+      style="height: 5em; width: 2em; background-color: black"
+    ></button>
+  </div>
+</div>
+
+<!-- height: 3em -->

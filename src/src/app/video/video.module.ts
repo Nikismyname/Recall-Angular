@@ -12,6 +12,7 @@ import {VgOverlayPlayModule} from 'videogular2/overlay-play';
 import {VgBufferingModule} from 'videogular2/buffering';
 import { NotateVideoComponent } from './components/notate-video/notate-video.component';
 import { VideoPlayerComponent } from './components/video-player/video-player.component';
+import { NoteComponent } from './components/note/note.component';
 
 const components = [
   CreateVideoComponent,
@@ -20,7 +21,7 @@ const components = [
 ]; 
 
 @NgModule({
-  declarations: [...components],
+  declarations: [...components, NoteComponent],
   imports: [
     CommonModule,
     VideoRoutingModule,

@@ -2,7 +2,7 @@
     <div #frameDiv class="col-sm-12">
       <youtube-player
         *ngIf="type === VideoType.youTube"
-        [videoId]=""
+        [videoId]="token"
         (ready)="saveYouTubePlayer($event)"
         [width]="'100%'"
         [height]="'100%'"

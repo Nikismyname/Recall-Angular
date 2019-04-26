@@ -1,3 +1,26 @@
-<p>
-  all-videos works!
-</p>
+<div cdkDropListGroup>
+  <div class="row">
+
+  <div class="col-4">
+    <app-video-column
+      [videos]="col1Videos"
+      [colNumber]="1"
+      (onDroppedEmitter)="onDropped($event)"
+    ></app-video-column></div>
+
+  <div class="col-4">
+    <app-video-column
+      [videos]="col2Videos"
+      [colNumber]="2"
+      (onDroppedEmitter)="onDropped($event)"
+    ></app-video-column></div>
+
+  <div class="col-4">
+    <app-video-column
+      [videos]="col3Videos"
+      [colNumber]="3"
+      (onDroppedEmitter)="onDropped($event)"
+    ></app-video-column></div>
+
+  </div>
+</div>

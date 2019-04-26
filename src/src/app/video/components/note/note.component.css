@@ -1,0 +1,24 @@
+.inner-text-box{
+    margin: 1em;
+    padding: 0;
+    white-space: pre-wrap;
+    line-height: 1.5em;
+    overflow: hidden;
+}
+
+.outer-text-box{
+    margin: 1em;
+}
+
+.note-border {
+    background-color: rgba(55,61,67,1);
+    border: 1px solid black;
+} 
+
+.on-focus {
+    height: 100%;
+}
+
+.on-blur {
+    height: 3em;
+}

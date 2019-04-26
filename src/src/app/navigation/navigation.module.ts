@@ -7,20 +7,27 @@ import { VideoComponent } from './components/video/video.component';
 import { DirComponent } from './components/dir/dir.component';
 import { DirListComponent } from './components/dir-list/dir-list.component';
 import { NavigationRoutingModule } from './navigation-routing.module';
+import { VideoColumnComponent } from './components/video-column/video-column.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 const components = [
   NavigationComponent,
+
   AllVideosComponent,
-  CurrentDirComponent,
+  VideoColumnComponent,
   VideoComponent,
+
   DirComponent,
-  DirListComponent
+  DirListComponent,
+
+  CurrentDirComponent,
 ];
 
 @NgModule({
   declarations: [...components],
   imports: [
     CommonModule,
+    DragDropModule,
     NavigationRoutingModule,
   ]
 })

@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { VideoType } from 'src/app/services/models/others/video-type';
 import { SafeUrl } from '@angular/platform-browser';
-import { type } from 'os';
 
 @Component({
   selector: 'app-video-player',
@@ -9,21 +8,43 @@ import { type } from 'os';
   styleUrls: ['./video-player.component.css']
 })
 export class VideoPlayerComponent implements OnInit {
-
+  VideoType = VideoType;
+  
   @ViewChild("frameDiv") frame: ElementRef; 
-  VideoType = VideoType; 
-  @Input() type: VideoType;
 
-  @Input() token: string; 
+  type: VideoType;
 
-  localSetUp: boolean = false;
   youTubePlayer: YT.Player;
+  token: string;
+
   localSources: SafeUrl[];
+  localSetUp: boolean = false;
 
   constructor() { }
 
   ngOnInit() {
 
+  }
+
+  setUpYouTube(token: string) {
+    this.type = VideoType.youTube;
+    this.token = token;
+  }
+
+  setUpLocal(url: SafeUrl) {
+    this.localSources = [];
+    this.localSources.push(url);
+    this.type = VideoType.local;
+    this.localSetUp = true;
+  }
+
+  changeLocal(url: SafeUrl) {
+    this.localSources = [];
+    this.localSources.push(url);
+  }
+
+  serUpVimeo() {
+    
   }
 
   play() { 
@@ -77,19 +98,8 @@ export class VideoPlayerComponent implements OnInit {
     this.frame.nativeElement.style.height = (this.frame.nativeElement.offsetWidth) * 9 / 16 + "px";
   }
 
-  initialiseLocalVideo(url: SafeUrl) {
-    if (this.type !== VideoType.local) { return;}
-    this.localSources = [];
-    this.localSources.push(url); 
-    this.localSetUp = true;
-  }
-
   private saveYouTubePlayer(player: YT.Player) {
     this.youTubePlayer = player;
-
-    if (this.token && this.type === VideoType.youTube) {
-      this.youTubePlayer.loadVideoById(this.token); 
-    }
   }
 
 }

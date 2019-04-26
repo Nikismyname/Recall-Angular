@@ -12,7 +12,7 @@
 <form [formGroup]="form" (submit)="onSubmit()">
 <div class="row mt-5">
   <div class="col-10" style="display: flex; align-items: center; justify-content: center">
-    <div>
+    <div class="VideoType">
       <input 
         type="radio" 
         id="isYouTube" 
@@ -53,20 +53,22 @@
 
   </div><div class="col-2"></div>
 
-  <!-- <ng-container *ngIf="youTube.checked"> -->
-    <label [hidden]="!youTube.checked" class="col-2 col-form-label text-right">Url</label>
-    <div [hidden]="!youTube.checked" class="col-6">
-      <input 
-        formControlName="url"
-        class="form-control-black mb-4" 
-        type="text" 
-      />
-    </div>
-    <div [hidden]="!youTube.checked" class="col-2">
-        <button (click)="onClickPlay()" class="btn btn-primary btn-block">Play</button>
-    </div>
-    <div [hidden]="!youTube.checked" class="col-2"></div>
-  <!-- </ng-container> -->
+  <div class="col-10 alert alert-warning"
+    *ngIf="c['videoType']?.hasError('required')"
+  >Video Type is required</div>
+
+  <label [hidden]="!youTube.checked" class="col-2 col-form-label text-right">Url</label>
+  <div [hidden]="!youTube.checked" class="col-6">
+    <input 
+      formControlName="url"
+      class="form-control-black mb-4" 
+      type="text" 
+    />
+  </div>
+  <div [hidden]="!youTube.checked" class="col-2">
+      <button (click)="onClickPlay()" class="btn btn-primary btn-block">Play</button>
+  </div>
+  <div [hidden]="!youTube.checked" class="col-2"></div>
 
   <label class="col-2 col-form-label text-right">Name</label>
   <div class="col-8">

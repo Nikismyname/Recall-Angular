@@ -1,0 +1,8 @@
+<div cdkDropList (cdkDropListDropped)="onDropped($event)" [cdkDropListData]="colNumber">
+    <ng-template ngFor let-video [ngForOf]="videos">
+    <div cdkDrag>
+      <div class="box-custom-placeholder" *cdkDragPlaceholder></div>
+      <app-video [video]="video"></app-video>
+    </div>
+  </ng-template>
+</div>
