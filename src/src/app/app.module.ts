@@ -7,7 +7,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AppHttpInterceptor } from './interceptors/app.http.interceptor';
 import { HomePageComponent } from './components/home-page/home-page.component';
-
 import { ToastrModule } from "ngx-toastr";
 
 @NgModule({

@@ -4,6 +4,7 @@
   </div>
   <div class="col-sm-2 align-self-end">
     <button
+        (click)="addNewNote(null, NoteType.Note)"
         class="btn btn-primary btn-block add-note" position="top">
         Add Note
     </button>
@@ -43,13 +44,18 @@
 </ng-template>
 
 <ng-template #noteRec let-note>
-    <app-note [note]="note"></app-note>
+    <app-note [note]="note" 
+        (createChildEmitter)="addNewNote($event.id, $event.type)"
+        (deleteEmitter)="deleteNote($event)" 
+    ></app-note>
     <div class="ml-3">
         <ng-template ngFor let-note [ngForOf]="getChildNotes(note.inPageId)">
             <ng-container *ngTemplateOutlet="noteRec; context: {$implicit: note}"></ng-container>
         </ng-template>
     </div>
 </ng-template>
-
 <input (change)="onFileSelected($event)" #fileSelector type="file" accept="video/*" hidden />
 <button class="btn btn-primary" (click)="fileSelector.click()"> Select Video</button>
+<button class="btn btn-primary" (click)="save()"> Save </button>
+
+<!-- <pre>{{notes|json}}</pre> -->

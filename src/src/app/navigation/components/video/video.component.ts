@@ -1,7 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { IVideoIndex } from 'src/app/services/models/navigation/video-index';
 import { RoutePaths, RoutesNoSlash } from 'src/app/services/route-paths';
 import { Router } from '@angular/router';
+import { ContextMenuComponent } from 'ngx-contextmenu';
+import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
 
 @Component({
   selector: 'app-video',
@@ -11,10 +13,12 @@ import { Router } from '@angular/router';
 export class VideoComponent implements OnInit {
 
   @Input() video: IVideoIndex;
+  @ViewChild(ContextMenuComponent) public basicMenu: ContextMenuComponent;
 
   constructor(
+    private navService: NavStoreService,
     public routePaths: RoutePaths,
-    private router: Router,
+    private router: Router, 
   ) { }
 
   ngOnInit() {
@@ -27,5 +31,9 @@ export class VideoComponent implements OnInit {
   stopPropagation(e) {
     e.stopPropagation();
   } 
+
+  delete() {
+    this.navService.deleteVideo(this.video.id);
+  }
 
 }

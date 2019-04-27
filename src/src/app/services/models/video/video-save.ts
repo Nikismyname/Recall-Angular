@@ -1,9 +1,11 @@
+import { INoteInternal } from './note-internal';
+
 export interface IVideoSave { 
     videoId: number;
     seekTo: number;
     name: string;
-    desctiption: string;
+    description: string;
     finalSave: boolean;
-    newNotes: any[];
-    changes: any[];
+    newItems: INoteInternal[];
+    changes: any[][];
 }

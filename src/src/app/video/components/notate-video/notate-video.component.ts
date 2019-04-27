@@ -7,6 +7,8 @@ import { take } from 'rxjs/operators';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { UrlService } from 'src/app/services/url.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { IVideoEdit } from 'src/app/services/models/video/video-edit';
+import { VideoNotateStoreServices } from 'src/app/services/DataServices/video-notate-store.services';
 
 @Component({
   selector: 'app-notate-video',
@@ -16,8 +18,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class NotateVideoComponent implements OnInit {
 
   VideoType = VideoType;
-  notes: INoteInternal[];
+  NoteType = NoteType;
+
+  notes: INoteInternal[] = [];
   token: string = "";
+
+  video: IVideoEdit;
+
   @ViewChild("player") player: VideoPlayerComponent;
   @ViewChild("fileSelector") fileSelector: ElementRef; 
 
@@ -26,10 +33,16 @@ export class NotateVideoComponent implements OnInit {
     private urlService: UrlService,
     private route: ActivatedRoute,
     private domSanitizer: DomSanitizer,
+    private notateService: VideoNotateStoreServices,
   ) {
     let id = Number(this.route.snapshot.paramMap.get("id"));
     this.videoService.getForEdit(id).pipe(take(1)).subscribe(
       videoEdit => {
+        this.video = videoEdit; 
+        this.notes = videoEdit.notes;
+        this.notateService.initialSet(videoEdit);
+        this.notateService.setVideoId(id);
+        
         if (videoEdit.isYouTube) {
           this.player.setUpYouTube(this.urlService.extractToken(videoEdit.url));
         } else if(videoEdit.isLocal) {
@@ -38,43 +51,41 @@ export class NotateVideoComponent implements OnInit {
       },
       error => { console.log(error) }
     )
-    this.notes = [];
-    let note1: any = { inPageId: 0, inPageParentId: null, content: "Root Dir 1" }; 
-    let note2: any = {inPageId: 1, inPageParentId: 0, content:"child Dir 2"}; 
-    let note3: any = {inPageId: 2, inPageParentId: 1, content:"child Dir 3"}; 
-
-    this.notes.push(note1);
-    this.notes.push(note2);
-    this.notes.push(note3);
   };
 
   getRootNotes():INoteInternal[] {
-    return this.notes.filter(x => x.inPageParentId === null);
+    return this.notes.filter(x => x.inPageParentId === null && x.deleted === false);
   };
 
   getChildNotes(id: number): INoteInternal[] { 
-    return this.notes.filter(x => x.inPageParentId === id);
+    let childNotes = this.notes.filter(x => x.inPageParentId === id && x.deleted === false);
+    return childNotes;
   };
 
   ngOnInit() {
   };
 
   addNewNote(parentId: number = null, type: NoteType = NoteType.Note) {
-    
-    let parentDbId: number = null; 
+
+    let parentDbId: number = -1; 
     let level: number = 0;
 
     if (parentId === null) {
       
     } else {
-      let parentNote = this.notes.filter(x => x.id === parentId)[0];
+      let parentNote = this.notes.filter(x => x.inPageId === parentId)[0];
+      parentDbId = 0;
       if (parentNote.id) {
         parentDbId = parentNote.id;
       }
       level = parentNote.level + 1;
     }
 
-    let inPageId = this.notes.length + 1;
+    if (level >= 4) {
+      return;
+    }
+
+    let inPageId = this.notes.length;
 
     this.notes.push({
       id: 0, //no db id
@@ -95,6 +106,28 @@ export class NotateVideoComponent implements OnInit {
 
       formatting: 0,
     });
+
+    console.log(this.notes);
+  }
+
+  deleteNote(id: number) {
+    this.deleteNoteRecursion(this.notes.filter(x=>x.inPageId === id)[0]);
+  }
+
+  private deleteNoteRecursion(note: INoteInternal) {
+    let children = this.getChildNotes(note.inPageId);
+    for (let i = 0; i < children.length; i++) {
+      this.deleteNoteRecursion(children[i]);
+    }
+
+    note.deleted = true;
+  } 
+
+  save() {
+    this.notateService.save(this.video).subscribe(
+      newIds => { console.log("Success", newIds) },
+      error => { console.log("Error", error) },
+    );
   }
 
   onFileSelected(e) {// for video player

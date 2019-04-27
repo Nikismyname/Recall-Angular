@@ -4,6 +4,8 @@ import { INavIndex } from '../models/navigation/nav-index';
 import { NavigationService } from '../navigation.service';
 import { take } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { VideoService } from '../video.service';
+import { DirectoryService } from '../directory.service';
 
 @Injectable({
     providedIn: "root"
@@ -12,10 +14,12 @@ export class NavStoreService {
 
     constructor(
         private navService: NavigationService,
+        private videoService: VideoService, 
+        private directoryService: DirectoryService,
         private toastr: ToastrService,
     ) {
         this.navHistory = [];
-     }
+    }
 
     private readonly _navIndex = new BehaviorSubject<INavIndex>(null);
 
@@ -39,6 +43,31 @@ export class NavStoreService {
                 });
         } else {
             this._navIndex.next(existingNav[0]);
+        }
+    }
+
+    deleteVideo(id: number) {
+        let currentNav = this.navHistory[this.navHistory.length - 1];
+        let videoToDelete = currentNav.videos.filter(x => x.id === id)[0];
+        if (videoToDelete) {
+            this.videoService.delete(id).pipe(take(1)).subscribe(
+                () => {
+                    currentNav.videos = currentNav.videos.filter(x => x.id !== id);
+                },
+                error => { console.log(error) })
+        }
+    }
+
+    deleteDirectory(id: number) {
+        let currentNav = this.navHistory[this.navHistory.length - 1];
+        let dirToDelete = currentNav.subdirectories.filter(x => x.id === id)[0];
+        if (dirToDelete) {
+            this.directoryService.delete(id).pipe(take(1)).subscribe(
+                () => { 
+                    currentNav.subdirectories = currentNav.subdirectories.filter(x=>x.id !== id); 
+                }, 
+                error => console.log(error)
+            );
         }
     }
 }

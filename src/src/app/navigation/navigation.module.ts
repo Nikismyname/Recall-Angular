@@ -9,7 +9,8 @@ import { DirListComponent } from './components/dir-list/dir-list.component';
 import { NavigationRoutingModule } from './navigation-routing.module';
 import { VideoColumnComponent } from './components/video-column/video-column.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-
+import { ContextMenuModule } from 'ngx-contextmenu';
+ 
 const components = [
   NavigationComponent,
 
@@ -29,6 +30,9 @@ const components = [
     CommonModule,
     DragDropModule,
     NavigationRoutingModule,
+    ContextMenuModule.forRoot({
+      useBootstrap4: true
+    }), 
   ]
 })
 export class NavigationModule { }

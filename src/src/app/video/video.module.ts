@@ -13,6 +13,7 @@ import {VgBufferingModule} from 'videogular2/buffering';
 import { NotateVideoComponent } from './components/notate-video/notate-video.component';
 import { VideoPlayerComponent } from './components/video-player/video-player.component';
 import { NoteComponent } from './components/note/note.component';
+import { ContextMenuModule } from 'ngx-contextmenu';
 
 const components = [
   CreateVideoComponent,
@@ -27,6 +28,10 @@ const components = [
     VideoRoutingModule,
     NgxYoutubePlayerModule.forRoot(),
     ReactiveFormsModule,
+
+    ContextMenuModule.forRoot({
+      useBootstrap4: true
+    }), 
 
     VgCoreModule,
     VgControlsModule,

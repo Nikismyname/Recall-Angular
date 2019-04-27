@@ -17,5 +17,5 @@ export class DirectoryService {
 
     delete = (data: number) => { 
         return this.http.post<number>("Directory/Delete", JSON.stringify(data)); 
-    } 
+    }
 }

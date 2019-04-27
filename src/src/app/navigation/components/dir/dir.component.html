@@ -1,7 +1,22 @@
-<div (click)="onClickDir($event)" class="card mb-2" style="border: 3px solid rgba(100, 100, 100, 0.6)">
+<div 
+  (click)="onClickDir($event)" 
+  class="card mb-2" 
+  style="border: 3px solid rgba(100, 100, 100, 0.6)"
+  [contextMenu]="basicMenu"
+>
   <div class="card-body">
     <h6 className="card-title">{{dir.name}}</h6>
-    <a (click)="stopPropagation($event)" [routerLink]="[routePaths.loginPath]">Delete</a>
-    <a (click)="stopPropagation($event)" [routerLink]="[routePaths.loginPath]"class="ml-2">Edit</a>
+    <!-- <a (click)="stopPropagation($event)" [routerLink]="[routePaths.loginPath]">Delete</a>
+    <a (click)="stopPropagation($event)" [routerLink]="[routePaths.loginPath]"class="ml-2">Edit</a> -->
   </div>
 </div>
+
+<context-menu>
+    <ng-template contextMenuItem (execute)="delete()">
+      Delete
+    </ng-template>
+    <ng-template contextMenuItem divider="true"></ng-template>
+    <ng-template contextMenuItem (execute)="edit()">
+      Edit
+    </ng-template>
+  </context-menu> 

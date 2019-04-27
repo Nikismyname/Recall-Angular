@@ -1,10 +1,20 @@
-<div (click)="onClickVideo()" class="card mb-2 mt-2" style="border: 1px solid rgba(3, 91, 255, 0.6)">
+<div 
+  (click)="onClickVideo()" 
+  class="card mb-2 mt-2" 
+  style="border: 1px solid rgba(3, 91, 255, 0.6)"
+  [contextMenu]="basicMenu"
+>
   <div class="card-body">
     <h6 className="card-title">{{video.name}}</h6>
-    <!-- <a 
-      class="ml-2" 
-      (click)="stopPropagation($event)"
-      [routerLink]="[routePaths.deleteQuestionPath+'/'+question.id+'/global']">Delete
-    </a> -->
   </div>
 </div>
+
+<context-menu>
+    <ng-template contextMenuItem (execute)="delete()">
+      Delete
+    </ng-template>
+    <ng-template contextMenuItem divider="true"></ng-template>
+    <ng-template contextMenuItem let-item>
+      Something Else
+    </ng-template>
+  </context-menu> 
