@@ -3,6 +3,7 @@ import { RoutePaths } from 'src/app/services/route-paths';
 import { INavIndex } from 'src/app/services/models/navigation/nav-index';
 import { DirectoryService } from 'src/app/services/directory.service';
 import { take } from 'rxjs/operators';
+import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
 
 @Component({
   selector: 'app-current-dir',
@@ -17,6 +18,7 @@ export class CurrentDirComponent implements OnInit {
   constructor(
     public routePaths: RoutePaths,
     private directoryService: DirectoryService,
+    private navService: NavStoreService,
   ) { }
 
   ngOnInit() {
@@ -39,8 +41,8 @@ export class CurrentDirComponent implements OnInit {
     this.directoryService.create({ parentDirectoryId: this.currentDir.id, name: name })
       .pipe(take(1))
       .subscribe(
-        success => {
-          console.log("create dir success ", success);
+        dirInd => {
+          this.navService.registerCreatedDirectory(dirInd);
          },
         error => { 
           console.log("create dir failed ", error );

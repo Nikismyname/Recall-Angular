@@ -22,6 +22,7 @@
     "@angular/router": "~7.2.0",
     "core-js": "^2.5.4",
     "ngx-autosize": "^1.6.0",
+    "ngx-color-picker": "^7.5.0",
     "ngx-contextmenu": "^5.1.1",
     "ngx-toastr": "^10.0.2",
     "ngx-youtube-player": "^7.1.1",

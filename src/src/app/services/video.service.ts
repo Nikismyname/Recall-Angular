@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { IVideoCreate } from './models/video/video-create';
 import { IVideoEdit } from './models/video/video-edit';
 import { IVideoSave } from './models/video/video-save';
+import { IVideoIndex } from './models/navigation/video-index';
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +15,7 @@ export class VideoService {
     ) {}
 
     create = (data: IVideoCreate) => { 
-        return this.http.post<void>("Video/Create", JSON.stringify(data));
+        return this.http.post<IVideoIndex>("Video/Create", JSON.stringify(data));
     }
 
     getForEdit = (id: number) => { 

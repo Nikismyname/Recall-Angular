@@ -66,7 +66,18 @@ export class VideoNotateStoreServices {
         if (exstNotesNewState.length != exstNotesOldState.length) { alert("The old and new state of preexisting notes does note match!"); }
 
         let counter = 0;
-        let monitoredProperties = ["deleted", "content", "formatting", "seekTo", "type", "borderColor", "borderThickness"];
+        let monitoredProperties =
+            [
+                "deleted",
+                "content",
+                "formatting",
+                "seekTo",
+                "type",
+                "borderColor",
+                "borderThickness",
+                "backgroundColor", 
+                "textColor",
+            ];
         for (var i = 0; i < exstNotesNewState.length; i++) {
             var newStateNote = exstNotesNewState[i];
             var oldStateNote = exstNotesOldState[i];

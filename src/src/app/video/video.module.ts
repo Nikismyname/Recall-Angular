@@ -14,6 +14,7 @@ import { NotateVideoComponent } from './components/notate-video/notate-video.com
 import { VideoPlayerComponent } from './components/video-player/video-player.component';
 import { NoteComponent } from './components/note/note.component';
 import { ContextMenuModule } from 'ngx-contextmenu';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 const components = [
   CreateVideoComponent,
@@ -32,6 +33,8 @@ const components = [
     ContextMenuModule.forRoot({
       useBootstrap4: true
     }), 
+
+    ColorPickerModule,
 
     VgCoreModule,
     VgControlsModule,

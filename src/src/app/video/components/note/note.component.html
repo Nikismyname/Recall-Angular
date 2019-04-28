@@ -1,4 +1,9 @@
-<div class="note-border outer-text-box">
+<div 
+  [style.border] = "note.borderThickness+'px solid '+note.borderColor"
+  [style.background-color] = "note.backgroundColor"
+  [style.color] = "note.textColor"
+  class="note-border outer-text-box"
+>
     <div style="display:flex">
       <div 
         [innerHTML]="initialVal"
@@ -18,15 +23,74 @@
     </div>
   </div>
 
+  <input #ignoredInput
+      class="color-input"
+      [cpIgnoredElements]="[ignoredInput]"
+      [(cpToggle)]="toggleBorderColor"
+      [(colorPicker)]="note.borderColor"
+      [cpCancelButton]="true"
+      [cpOKButton]="true"
+      [cpOKButtonClass]= "'btn btn-primary btn-xs'"
+      [cpCancelButtonClass]= "'btn btn-primary btn-xs'"
+  />
+
+    <input #ignoredInput2
+      class="color-input"
+      [cpIgnoredElements]="[ignoredInput2]"
+      [(cpToggle)]="toggleBackgroundColor"
+      [(colorPicker)]="note.backgroundColor"
+      [cpCancelButton]="true"
+      [cpOKButton]="true"
+      [cpOKButtonClass]= "'btn btn-primary btn-xs'"
+      [cpCancelButtonClass]= "'btn btn-primary btn-xs'"
+  />
+
+  <input #ignoredInput3
+      class="color-input"
+      [cpIgnoredElements]="[ignoredInput3]"
+      [(cpToggle)]="toggleTextColor"
+      [(colorPicker)]="note.textColor"
+      [cpCancelButton]="true"
+      [cpOKButton]="true"
+      [cpOKButtonClass]= "'btn btn-primary btn-xs'"
+      [cpCancelButtonClass]= "'btn btn-primary btn-xs'"
+  />
+
   <context-menu>
     <ng-template 
       contextMenuItem 
       (execute)="deleteNote()">
       Delete</ng-template>
+
     <ng-template contextMenuItem divider="true"></ng-template>
     <ng-template 
-      contextMenuItem let-item 
-      (execute)="deleteNote()">
+      contextMenuItem
+      (execute)="goToTime()">
       Go To Time</ng-template>
+
+    <ng-template contextMenuItem divider="true"></ng-template>
+    <ng-template 
+      contextMenuItem
+      (execute)="toggleBorderColor = !toggleBorderColor">
+      Pick Border Color</ng-template>
+
+    <ng-template contextMenuItem divider="true"></ng-template>
+    <ng-template 
+      contextMenuItem
+      (execute)="toggleTextColor = !toggleTextColor">
+      Pick Text Color</ng-template>
+
+    <ng-template contextMenuItem divider="true"></ng-template>
+    <ng-template 
+      contextMenuItem
+      (execute)="toggleBackgroundColor = !toggleBackgroundColor">
+      Pick Background Color</ng-template>
+
+    <ng-template contextMenuItem divider="true"></ng-template>
+    <ng-template 
+      contextMenuItem
+      (execute)="pickBorderSize()">
+      <input (click)="stopPropagation($event)" [value]="borderSize" (input)="borderSizeInputChange($event)" type="number" />
+      Pick Border Size</ng-template>
   </context-menu>
 

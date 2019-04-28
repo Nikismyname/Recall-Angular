@@ -7,6 +7,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { VideoService } from 'src/app/services/video.service';
 import { take } from 'rxjs/operators';
 import { RoutesNoSlash } from '../../../services/route-paths'; 
+import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
 
 @Component({
   selector: 'app-create-video',
@@ -32,8 +33,8 @@ export class CreateVideoComponent {
     private route: ActivatedRoute,
     private router: Router,
     private urlService: UrlService,
-    private domSanitizer: DomSanitizer,
     private videoService: VideoService,
+    private navService: NavStoreService,
   ) {
     this.dirId = Number(this.route.snapshot.paramMap.get("id"));
     this.form = this.fb.group({
@@ -72,9 +73,10 @@ export class CreateVideoComponent {
     delete submitData["videoType"];
     
     this.videoService.create(submitData).pipe(take(1)).subscribe(
-      () => { 
+      videoIndex => {
+        this.navService.registerCreatedVideo(videoIndex); 
         this.router.navigate([RoutesNoSlash.indexPath + "/" + this.dirId]); 
-      }, 
+      },
       error => { 
         console.log(error);
       }

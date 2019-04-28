@@ -9,6 +9,7 @@ import { UrlService } from 'src/app/services/url.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IVideoEdit } from 'src/app/services/models/video/video-edit';
 import { VideoNotateStoreServices } from 'src/app/services/DataServices/video-notate-store.services';
+import * as c from '../../../utilities/constants';
 
 @Component({
   selector: 'app-notate-video',
@@ -97,8 +98,8 @@ export class NotateVideoComponent implements OnInit {
       deleted: false,
       type: type,
       seekTo: 0, //TODO Set The Seek To The video time
-      backgroundColor: "", 
-      textColor: "",
+      backgroundColor: c.secondaryColor, 
+      textColor: "white",
       borderColor: "black", 
       borderThickness: 1, 
       selectingColor: false,

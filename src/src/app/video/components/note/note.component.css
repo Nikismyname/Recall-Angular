@@ -22,3 +22,15 @@
 .on-blur {
     height: 3em;
 }
+
+.color-input{
+    position: fixed;
+    width: 0px;
+    height: 0px;
+    border: 0px;
+    top: 50%;
+    left: 50%;
+    /* bring your own prefixes */
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}

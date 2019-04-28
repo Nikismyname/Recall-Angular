@@ -27,6 +27,9 @@ export class NavigationComponent {
   }
 
   onClickDir(id) {
+    if (id === null) {
+      return;
+    }
     this.navService.setNav(id);
   }
 

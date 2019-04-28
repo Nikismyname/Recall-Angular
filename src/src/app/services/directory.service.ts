@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IDirectoryCreate } from './models/directory/directory-create';
+import { IDirChildIndex } from './models/navigation/dir-child-index';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,7 @@ export class DirectoryService {
     ) {}
 
     create = (data: IDirectoryCreate) => { 
-        return this.http.post<any>("Directory/Create", JSON.stringify(data)); 
+        return this.http.post<IDirChildIndex>("Directory/Create", JSON.stringify(data)); 
     } 
 
     delete = (data: number) => { 

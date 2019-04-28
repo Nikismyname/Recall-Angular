@@ -9,11 +9,19 @@ import { ContextMenuComponent } from 'ngx-contextmenu';
 })
 export class NoteComponent implements OnInit {
 
+  toggleBorderColor: boolean = false;
+  toggleTextColor: boolean = false;
+  toggleBackgroundColor: boolean = false;
+
   initialVal: string ="";
-  public note: INoteInternal; 
+  note: INoteInternal; 
+
+  borderSize: number = 1; 
+
   @Input("note") set noteSetter(val: INoteInternal) { 
     this.note = val;
     this.initialVal = this.note.content;
+    this.borderSize = this.note.borderThickness;
   };
   @Output() createChildEmitter: EventEmitter<{ id: number, type: NoteType }> = new EventEmitter();
   @Output() deleteEmitter: EventEmitter<number> = new EventEmitter(); 
@@ -39,6 +47,27 @@ export class NoteComponent implements OnInit {
   onContentChange(e) {
     let content = e.target.innerText; 
     this.note.content = content;
+  }
+
+  goToTime() {
+    alert("time");
+  }
+
+  pickBorderSize() {
+    if (this.borderSize < 0 || this.borderSize > 15) {
+      this.borderSize = this.note.borderThickness;
+    } else {
+      this.note.borderThickness = this.borderSize;
+    }
+  }
+
+  stopPropagation(e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  borderSizeInputChange(e) {
+    this.borderSize = e.target.value;
   }
 
   ngOnInit() {
