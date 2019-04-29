@@ -24,7 +24,8 @@ export class NoteComponent implements OnInit {
     this.borderSize = this.note.borderThickness;
   };
   @Output() createChildEmitter: EventEmitter<{ id: number, type: NoteType }> = new EventEmitter();
-  @Output() deleteEmitter: EventEmitter<number> = new EventEmitter(); 
+  @Output() deleteEmitter: EventEmitter<number> = new EventEmitter();
+  @Output() seekEmitter: EventEmitter<number> = new EventEmitter();
 
   @ViewChild(ContextMenuComponent) public basicMenu: ContextMenuComponent;
 
@@ -50,7 +51,7 @@ export class NoteComponent implements OnInit {
   }
 
   goToTime() {
-    alert("time");
+    this.seekEmitter.emit(this.note.seekTo);
   }
 
   pickBorderSize() {
