@@ -3,11 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { RoutesNoSlash, forFeatureRouting } from "../services/route-paths";
 import { CreateVideoComponent } from './components/create-video/create-video.component';
 import { NotateVideoComponent } from './components/notate-video/notate-video.component';
+import { Test1Component } from './components/RichTextEditorTests/test1/test1.component';
 
 const routes: Routes = [
     {
         path: forFeatureRouting(RoutesNoSlash.videoCreatePath+ "/:id"),
-        component: CreateVideoComponent,
+        component: Test1Component,
     },
     {
         path: forFeatureRouting(RoutesNoSlash.videoNotePath + "/:id"),

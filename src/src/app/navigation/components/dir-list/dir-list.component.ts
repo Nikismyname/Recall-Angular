@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IDirChildIndex } from 'src/app/services/models/navigation/dir-child-index';
 import { IReorderData } from 'src/app/services/models/others/reorder-data';
 import { ReorderService } from 'src/app/services/reorder.service';
+import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
 
 @Component({
   selector: 'app-dir-list',
@@ -10,13 +11,12 @@ import { ReorderService } from 'src/app/services/reorder.service';
 })
 export class DirListComponent {
 
-  @Input() currentDirId: number; 
   @Input() dirs: IDirChildIndex[]; 
   @Output() onClickDirEmitter: EventEmitter<number> = new EventEmitter(); 
-  @Output() onDroppedEmitter: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private reorderService: ReorderService,
+    private navService: NavStoreService,
   ) { }
 
   onDirClicked(id) { 
@@ -27,11 +27,11 @@ export class DirListComponent {
     let currentIndex = e.currentIndex;
     let prevIndex = e.previousIndex;
     let orderings = this.reorderService.generateReorderingsDir(this.dirs, currentIndex, prevIndex);
-    let qr: IReorderData = {
+
+    this.navService.reorderDirectories({
+      dirId: 0, //set in the service
       orderings: orderings,
-      dirId: this.currentDirId,
-    };
-    this.onDroppedEmitter.emit(qr);
+    });
   }
  
 }

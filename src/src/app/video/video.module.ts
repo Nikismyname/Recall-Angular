@@ -15,6 +15,7 @@ import { VideoPlayerComponent } from './components/video-player/video-player.com
 import { NoteComponent } from './components/note/note.component';
 import { ContextMenuModule } from 'ngx-contextmenu';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { Test1Component } from './components/RichTextEditorTests/test1/test1.component';
 
 const components = [
   CreateVideoComponent,
@@ -23,7 +24,7 @@ const components = [
 ]; 
 
 @NgModule({
-  declarations: [...components, NoteComponent],
+  declarations: [...components, NoteComponent, Test1Component],
   imports: [
     CommonModule,
     VideoRoutingModule,

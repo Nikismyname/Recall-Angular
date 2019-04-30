@@ -9,6 +9,7 @@ import { DirectoryService } from '../directory.service';
 import { IVideoIndex } from '../models/navigation/video-index';
 import { IDirChildIndex } from '../models/navigation/dir-child-index';
 import { RoutePaths } from '../route-paths';
+import { IReorderData } from '../models/others/reorder-data';
 
 @Injectable({
     providedIn: "root"
@@ -18,7 +19,7 @@ export class NavStoreService {
     rootId: number = null;
 
     constructor(
-        private navService: NavigationService,
+        private navigationService: NavigationService,
         private videoService: VideoService, 
         private directoryService: DirectoryService,
         private toastr: ToastrService,
@@ -50,12 +51,13 @@ export class NavStoreService {
 
         let existingNav = this.navHistory.filter(x => x.id === id);
         if (existingNav.length !== 1) { // there is no such nav in history!
-            //console.log("NO_PREEXISTING_NAV, ", id);
-            this.navService.getIndex(id).pipe(take(1)).subscribe(
+            this.navigationService.getIndex(id).pipe(take(1)).subscribe(
                 nav => {
-                    //console.log("NAV HERE, ",nav);
+                    
+                    nav.subdirectories = nav.subdirectories.sort((a, b) => a.order - b.order);
+                    nav.videos = nav.videos.sort((a, b) => a.order - b.order);
+
                     if (fetchingRoot) { 
-                        //console.log("GOT_ROOT_ID, ", nav.id);
                         this.rootId = nav.id;
                     }
                     this.navHistory = this.navHistory.concat(nav);
@@ -76,12 +78,13 @@ export class NavStoreService {
 
     registerCreatedDirectory(dirIndex: IDirChildIndex) {
         let currentNav = this.navHistory.filter(x=>x.id === this._navIndex.getValue().id)[0];
-        currentNav.subdirectories.push(dirIndex);
+        currentNav.subdirectories = currentNav.subdirectories.concat(dirIndex);
     }
 
-    registerCreatedVideo(videoIndex: IVideoIndex) { 
+    registerCreatedVideo(videoIndex: IVideoIndex) {
+        console.log(videoIndex);
         let currentNav = this.navHistory.filter(x=>x.id === this._navIndex.getValue().id)[0];
-        currentNav.videos.push(videoIndex);
+        currentNav.videos= currentNav.videos.concat(videoIndex);
     }
 
     deleteVideo(id: number) {
@@ -107,5 +110,56 @@ export class NavStoreService {
                 error => console.log(error)
             );
         }
+    }
+
+    reorderDirectories(data: IReorderData) { 
+        //REORDER DIRECTORIES LOCAL
+        let currentNav = this.navHistory.filter(x=>x.id === this._navIndex.getValue().id)[0];
+        for (let i = 0; i < data.orderings.length; i++) {
+            const ordering = data.orderings[i];
+            let id = ordering[0];
+            let newOrder = i;
+            let directory = currentNav.subdirectories.filter(x => x.id === id)[0];
+            directory.order = newOrder;
+        }
+        currentNav.subdirectories = currentNav.subdirectories.sort((a, b) => a.order - b.order);
+        //...
+
+        //REORDER DB DIRECTORIES
+        data.dirId = this._navIndex.getValue().id;
+        this.navigationService.reorderDirectories(data).pipe(take(1)).subscribe(
+            () => { this.toastr.success("Reordered Directories", "Success");},
+            error => { 
+                this.toastr.error("Reorder Directories failed!", "Error");
+                console.log(error);
+            } 
+        );
+        //...
+    } 
+
+    reorderVideos(data: IReorderData) { 
+        //REORDER VIDEOS LOCAL
+        let currentNav = this.navHistory.filter(x=>x.id === this._navIndex.getValue().id)[0];
+        for (let i = 0; i < data.orderings.length; i++) {
+            const ordering = data.orderings[i];
+            let id = ordering[0];
+            let newOrder = i;
+            let video = currentNav.videos.filter(x => x.id === id)[0];
+            video.order = newOrder;
+        }
+        currentNav.videos = currentNav.videos.sort((a, b) => a.order - b.order);
+        currentNav.videos = currentNav.videos.slice(0);
+        //...
+
+        //REORDER DB VIDEOS
+        data.dirId = this._navIndex.getValue().id;
+        this.navigationService.reotderVideos(data).pipe(take(1)).subscribe(
+            () => { this.toastr.success("Reordered Videos", "Success");},
+            error => { 
+                this.toastr.error("Reorder Videos failed!", "Error");
+                console.log(error);
+            } 
+        );
+        //...
     }
 }

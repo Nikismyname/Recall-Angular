@@ -3,7 +3,9 @@
     <div class="card-body">
       <h6 class="card-title">{{currentDir.name}}</h6>
           <a (click)="stopPropagation($event)" [routerLink]="routePaths.videoCreatePath+'/'+currentDir.id">Start Video Notes</a> <br />
-          <a (click)="onCreateDir($event)" href="#">Create Directory</a>
+          <a (click)="onCreateDir($event)" href="#">Create Directory</a> <br />
+          <a (click)="createDir($event)" href="#">Dir Test</a> <br />
+          <a (click)="createVideo($event)" href="#">Vid Test</a>
     </div>
   </div>
 </div>

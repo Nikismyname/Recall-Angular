@@ -1,13 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { IVideoIndex } from 'src/app/services/models/navigation/video-index';
 import { ReorderService } from 'src/app/services/reorder.service';
+import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
 
 @Component({
   selector: 'app-all-videos',
   templateUrl: './all-videos.component.html',
   styleUrls: ['./all-videos.component.css']
 })
-export class AllVideosComponent implements OnInit {
+export class AllVideosComponent {
 
   videos: IVideoIndex[] = [];
   col1Videos: IVideoIndex[] = [];
@@ -15,7 +16,8 @@ export class AllVideosComponent implements OnInit {
   col3Videos: IVideoIndex[] = [];
 
   @Input("videos") set videoSetter(data: IVideoIndex[]) {
-    this.videos = data.sort((a, b) => a.order - b.order);
+    console.log("ALL_VIDEOS_",data);
+    this.videos = data;
     for (let i = 0; i < this.videos.length; i++) {
       this.videos[i].order = i;
     }
@@ -31,13 +33,31 @@ export class AllVideosComponent implements OnInit {
 
   constructor(
     private reorderService: ReorderService,
+    private navService: NavStoreService,
   ) { }
 
-  ngOnInit() {
-  }
-
   onDropped(e) {
+    let currentIndex = e.currentIndex;
+    let prevIndex = e.previousIndex;
 
+    let container = e.container;
+    let currColumn = container.data;
+
+    let prevContainer = e.previousContainer;
+    let prevColumn = prevContainer.data;
+
+    let orderings = this.reorderService.generateOrderingWithElements(
+      this.videos,
+      currentIndex,
+      prevIndex,
+      currColumn,
+      prevColumn
+    );
+
+    this.navService.reorderVideos({
+      dirId: 0, // set in the service
+      orderings: orderings,
+    });
   }
 
 }
