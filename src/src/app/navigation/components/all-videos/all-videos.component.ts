@@ -16,7 +16,6 @@ export class AllVideosComponent {
   col3Videos: IVideoIndex[] = [];
 
   @Input("videos") set videoSetter(data: IVideoIndex[]) {
-    console.log("ALL_VIDEOS_",data);
     this.videos = data;
     for (let i = 0; i < this.videos.length; i++) {
       this.videos[i].order = i;

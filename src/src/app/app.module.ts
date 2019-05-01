@@ -9,6 +9,9 @@ import { AppHttpInterceptor } from './interceptors/app.http.interceptor';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { ToastrModule } from "ngx-toastr";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { YTPlayerConfig } from 'angular-youtube-player';
+
+import { NgxElectronModule } from 'ngx-electron';
 
 @NgModule({
   declarations: [
@@ -22,12 +25,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
+    NgxElectronModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AppHttpInterceptor,
       multi: true,
+    },
+    {
+      provide: YTPlayerConfig,
+      useValue: { shouldLoadAPI: true, multiplePlaying: false }
     },
   ],
   bootstrap: [AppComponent]

@@ -1,11 +1,10 @@
-<youtube-player
-  *ngIf="type === VideoType.youTube && youTubeSetUp"
+<app-custom-youtube-player
+  *ngIf="youTubeSetUp && type === VideoType.youTube"
   [videoId]="token"
-  (ready)="saveYouTubePlayer($event)"
-  (change)="youtubeChange($event)"
-  [width]="'100%'"
-  [height]="'100%'"
-></youtube-player>
+  (onPlayerReadyEmitter)="saveYouTubePlayer($event)"
+  (onPlayerChangeStateEmitter)="youtubeChange($event)"
+></app-custom-youtube-player>
+
 <vg-player 
   *ngIf="localSetUp && type === VideoType.local" 
   (onPlayerReady)="saveLocalPlayer($event)"

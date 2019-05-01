@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { VideoType } from 'src/app/services/models/others/video-type';
 import { SafeUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
+import { YTPlayerComponent } from 'angular-youtube-player';
 
 @Component({
   selector: 'app-video-player',
@@ -10,26 +11,31 @@ import { VgAPI } from 'videogular2/core';
 })
 export class VideoPlayerComponent {
 
+  //1 is ngx 2 the other one
+  youTubePlayerUsed: number = 1;
+
   @Output() videoInitialDoneEmitter: EventEmitter<void> = new EventEmitter();
 
+  @ViewChild("yt2") youtubePlayer2: YTPlayerComponent;
+
   VideoType = VideoType;
-  
+
   isDone: boolean = false;
 
-  initialSeekToTime: number; 
+  initialSeekToTime: number;
 
   type: VideoType;
 
   youTubePlayer: YT.Player;
   token: string;
-  isFirstPlay: boolean = true; 
+  isFirstPlay: boolean = true;
   youTubeSetUp: boolean = false;
 
   localPlayer: VgAPI;
   localSources: SafeUrl[];
   localSetUp: boolean = false;
 
-  constructor() { }
+  constructor() {}
 
   setUpYouTube(token: string) {
     this.type = VideoType.youTube;
@@ -42,7 +48,7 @@ export class VideoPlayerComponent {
     this.localSources.push(url);
     this.type = VideoType.local;
     //TODO: fix this shit
-    if (this.localSetUp) { 
+    if (this.localSetUp) {
       setTimeout(() => {
         this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;
       }, 100);
@@ -56,10 +62,10 @@ export class VideoPlayerComponent {
   }
 
   serUpVimeo() {
-    
+
   }
 
-  play() { 
+  play() {
     switch (this.type) {
       case VideoType.youTube:
         this.youTubePlayer.playVideo();
@@ -89,7 +95,7 @@ export class VideoPlayerComponent {
   seekTo(time: number): void {
     switch (this.type) {
       case VideoType.youTube:
-        this.youTubePlayer.seekTo(time,true)
+        this.youTubePlayer.seekTo(time, true)
         break;
       case VideoType.local:
         this.localPlayer.getDefaultMedia().currentTime = time;
@@ -111,10 +117,11 @@ export class VideoPlayerComponent {
   }
 
   public saveYouTubePlayer(player: YT.Player) {
+    console.log(player);
     this.youTubePlayer = player;
     this.youTubePlayer.seekTo(this.initialSeekToTime, true);
     this.youTubePlayer.mute();
-    this.videoInitialDoneEmitter.emit(); 
+    this.videoInitialDoneEmitter.emit();
   }
 
   public saveLocalPlayer(player: VgAPI) {
@@ -123,15 +130,15 @@ export class VideoPlayerComponent {
     this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;
   }
 
-  onMediaReady() { 
+  onMediaReady() {
     alert("MEDIA READY");
   }
 
   youtubeChange(e) {
     console.log(e.data);
-    if (this.isFirstPlay) { 
+    if (this.isFirstPlay) {
       if (e.data === 1) {
-        this.isFirstPlay = false; 
+        this.isFirstPlay = false;
         this.youTubePlayer.pauseVideo();
         this.youTubePlayer.unMute();
       }
