@@ -3,6 +3,7 @@ import { VideoType } from 'src/app/services/models/others/video-type';
 import { SafeUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 import { YTPlayerComponent } from 'angular-youtube-player';
+import { ElectronService } from 'ngx-electron';
 
 @Component({
   selector: 'app-video-player',
@@ -11,8 +12,7 @@ import { YTPlayerComponent } from 'angular-youtube-player';
 })
 export class VideoPlayerComponent {
 
-  //1 is ngx 2 the other one
-  youTubePlayerUsed: number = 1;
+  localVideoUrl: string[] = ["file:///C:/Users/ASUS%20G751JY/AppData/Local/Google/Chrome/User%20Data/Default/Cache/Videos/1.Introduction/01.Improve%20your%20Angular%20architecture%20with%20NgRx.mp4"];
 
   @Output() videoInitialDoneEmitter: EventEmitter<void> = new EventEmitter();
 
@@ -35,7 +35,9 @@ export class VideoPlayerComponent {
   localSources: SafeUrl[];
   localSetUp: boolean = false;
 
-  constructor() {}
+  constructor(
+    public electronService: ElectronService,
+  ) {}
 
   setUpYouTube(token: string) {
     this.type = VideoType.youTube;
@@ -125,13 +127,10 @@ export class VideoPlayerComponent {
   }
 
   public saveLocalPlayer(player: VgAPI) {
+    alert("here");
     this.localPlayer = player;
     this.videoInitialDoneEmitter.emit();
     this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;
-  }
-
-  onMediaReady() {
-    alert("MEDIA READY");
   }
 
   youtubeChange(e) {

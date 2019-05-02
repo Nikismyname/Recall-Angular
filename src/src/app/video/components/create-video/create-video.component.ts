@@ -8,6 +8,7 @@ import { VideoService } from 'src/app/services/video.service';
 import { take } from 'rxjs/operators';
 import { RoutesNoSlash } from '../../../services/route-paths'; 
 import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { ElectronService } from 'ngx-electron';
 
 @Component({
   selector: 'app-create-video',
@@ -35,6 +36,7 @@ export class CreateVideoComponent {
     private urlService: UrlService,
     private videoService: VideoService,
     private navService: NavStoreService,
+    private electronService: ElectronService,
   ) {
     this.dirId = Number(this.route.snapshot.paramMap.get("id"));
     this.form = this.fb.group({
@@ -114,6 +116,13 @@ export class CreateVideoComponent {
 
   get c() {
     return this.form.controls;
+  }
+
+  localFileSelect() {
+    if (this.electronService.isElectronApp) {
+      let strings = this.electronService.remote.dialog.showOpenDialog({ properties: ['openFile'] });
+      console.log(strings);
+    }
   }
 
 }

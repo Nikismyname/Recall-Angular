@@ -12,6 +12,7 @@ import { VideoNotateStoreServices } from 'src/app/services/DataServices/video-no
 import * as c from '../../../utilities/constants';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common';
+import { ElectronService } from 'ngx-electron';
 
 @Component({
   selector: 'app-notate-video',
@@ -44,6 +45,7 @@ export class NotateVideoComponent implements OnInit {
     private notateService: VideoNotateStoreServices,
     private toastr: ToastrService,
     private location: Location,
+    public electronService: ElectronService,
   ) {
     let id = Number(this.route.snapshot.paramMap.get("id"));
     this.videoService.getForEdit(id).pipe(take(1)).subscribe(
@@ -59,7 +61,10 @@ export class NotateVideoComponent implements OnInit {
         if (videoEdit.isYouTube) {
           this.player.setUpYouTube(this.urlService.extractToken(videoEdit.url));
         } else if (videoEdit.isLocal) {
-          this.fileSelector.nativeElement.click();
+          if (this.electronService.isElectronApp) {
+          } else {
+            this.fileSelector.nativeElement.click();
+          }
         }
       },
       error => {

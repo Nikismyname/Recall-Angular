@@ -9,9 +9,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "electron": "ng build --base-href ./ && tsc --p electron && electron .",
+    "electron": "ng build --prod=false --base-href ./ && tsc --p electron && electron .",
     "electron2": "tsc --p electron && electron .",
-    "electron3": "electron ."
+    "electron3": "electron .",
+    "build-electron-app":"electron-packager . --win32​"
   },
   "private": true,
   "dependencies": {
@@ -26,6 +27,7 @@
     "@angular/router": "~7.2.0",
     "angular-youtube-player": "^1.0.2",
     "core-js": "^2.5.4",
+    "electron-reload": "^1.4.0",
     "ngx-autosize": "^1.6.0",
     "ngx-color-picker": "^7.5.0",
     "ngx-contextmenu": "^5.1.1",
@@ -49,6 +51,7 @@
     "@types/node": "~8.9.4",
     "codelyzer": "~4.5.0",
     "electron": "^5.0.0",
+    "electron-packager": "^13.1.1",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.0.0",
