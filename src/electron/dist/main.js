@@ -13,7 +13,14 @@ electron_1.app.on('activate', function () {
 });
 //require('electron-reload')(__dirname, { electron: require('${__dirname}/../../node_modules/electron') });
 function createWindow() {
-    win = new electron_1.BrowserWindow({ width: 800, height: 600, webPreferences: { webSecurity: false, nodeIntegration: true } });
+    win = new electron_1.BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            webSecurity: false,
+            nodeIntegration: true,
+        },
+    });
     if (fromBuild) {
         win.loadURL(url.format({
             pathname: path.join(__dirname, '../../dist/recall/index.html'),

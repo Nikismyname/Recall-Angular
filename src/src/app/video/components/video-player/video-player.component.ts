@@ -2,7 +2,6 @@ import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { VideoType } from 'src/app/services/models/others/video-type';
 import { SafeUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
-import { YTPlayerComponent } from 'angular-youtube-player';
 import { ElectronService } from 'ngx-electron';
 
 @Component({
@@ -11,14 +10,11 @@ import { ElectronService } from 'ngx-electron';
   styleUrls: ['./video-player.component.css']
 })
 export class VideoPlayerComponent {
+  VideoType = VideoType;
 
   localVideoUrl: string[] = ["file:///C:/Users/ASUS%20G751JY/AppData/Local/Google/Chrome/User%20Data/Default/Cache/Videos/1.Introduction/01.Improve%20your%20Angular%20architecture%20with%20NgRx.mp4"];
 
   @Output() videoInitialDoneEmitter: EventEmitter<void> = new EventEmitter();
-
-  @ViewChild("yt2") youtubePlayer2: YTPlayerComponent;
-
-  VideoType = VideoType;
 
   isDone: boolean = false;
 
@@ -47,7 +43,8 @@ export class VideoPlayerComponent {
 
   setUpLocal(url: SafeUrl) {
     this.localSources = [];
-    this.localSources.push(url);
+    this.localSources = this.localSources.concat(url);
+    console.log(url);
     this.type = VideoType.local;
     //TODO: fix this shit
     if (this.localSetUp) {
@@ -77,7 +74,6 @@ export class VideoPlayerComponent {
         break;
       case VideoType.vimeo:
         break;
-
     }
   }
 
@@ -127,7 +123,6 @@ export class VideoPlayerComponent {
   }
 
   public saveLocalPlayer(player: VgAPI) {
-    alert("here");
     this.localPlayer = player;
     this.videoInitialDoneEmitter.emit();
     this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;

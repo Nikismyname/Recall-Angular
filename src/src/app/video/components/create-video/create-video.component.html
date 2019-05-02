@@ -1,11 +1,25 @@
 <div class="row">
   <div #frameDiv class="col-sm-10">
-    <youtube-player
+    <app-custom-youtube-player
+      *ngIf="!localVidSelected"
       [videoId]="token"
-      (ready)="savePlayer($event)"
-      [width]="'100%'"
-      [height]="'100%'"
-    ></youtube-player>
+      (onPlayerReadyEmitter)="savePlayer($event)"
+    ></app-custom-youtube-player>
+
+    <vg-player 
+      *ngIf="localVidSelected && electronService.isElectronApp" 
+    >
+      <video 
+        width="100%" 
+        height="100%" 
+        [vgMedia]="media" 
+        #media 
+        preload="auto" 
+        controls
+      >
+        <source *ngFor="let source of localVidSources" [src]="source">
+      </video>
+    </vg-player>
   </div>
 </div>
 
@@ -47,28 +61,55 @@
         class="mr-2 ml-2"
         name="videoType"
         value="Local"
+        #local
       />
       <label for="isLocal">Local</label>
     </div>
-
   </div><div class="col-2"></div>
 
   <div class="col-10 alert alert-warning"
     *ngIf="c['videoType']?.hasError('required')"
   >Video Type is required</div>
 
-  <label [hidden]="!youTube.checked" class="col-2 col-form-label text-right">Url</label>
-  <div [hidden]="!youTube.checked" class="col-6">
-    <input 
-      formControlName="url"
-      class="form-control-black mb-4" 
-      type="text" 
-    />
-  </div>
-  <div [hidden]="!youTube.checked" class="col-2">
-      <button type="button" (click)="onClickPlay()" class="btn btn-primary btn-block">Play</button>
-  </div>
-  <div [hidden]="!youTube.checked" class="col-2"></div>
+  <ng-template [ngIf]="youTube.checked || (local.checked && electronService.isElectronApp)">
+    <p 
+      *ngIf="localVidSelected && local.checked && electronService.isElectronApp"
+      style="color: white" 
+      class="col-12 text-center"
+    >
+      Only Save if video plays!
+    </p>
+    <label  class="col-2 col-form-label text-right">Url</label>
+    <div class="col-6">
+      <input 
+        formControlName="url"
+        class="form-control-black mb-4" 
+        type="text" 
+      />
+    </div>
+
+    <div class="col-2" *ngIf="youTube.checked">
+        <button type="button" (click)="onClickPlay()" class="btn btn-primary btn-block">Play</button>
+    </div>
+    <div class="col-2" *ngIf="local.checked && electronService.isElectronApp">
+        <button type="button" (click)="localFileSelect()" class="btn btn-primary btn-block">Select</button>
+    </div>
+
+    <div class="col-2"></div>
+  </ng-template>
+
+  <ng-template [ngIf]="local.checked && !electronService.isElectronApp">
+    <p style="color: white" class="col-12 text-center">Write down the path to the video so you can easily find for when taking notes in the future!</p>
+    <label  class="col-2 col-form-label text-right">Url</label>
+    <div class="col-8 mb-4">
+      <input
+        formControlName="url"
+        class="form-control-black" 
+        type="text" 
+      />
+    </div>
+    <div class="col-2"></div>
+  </ng-template>
 
   <label class="col-2 col-form-label text-right">Name</label>
   <div class="col-8">

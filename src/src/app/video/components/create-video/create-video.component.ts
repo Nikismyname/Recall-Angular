@@ -17,8 +17,8 @@ import { ElectronService } from 'ngx-electron';
 })
 export class CreateVideoComponent {
 
-  localVidSrc: SafeUrl;
-  localVidStringSrc: string;
+  localVidSources: SafeUrl[];
+  localVidSelected: boolean = false;
   sources: SafeUrl[];
   dirId: number;
   form: FormGroup;
@@ -27,7 +27,6 @@ export class CreateVideoComponent {
   loaded: boolean = false;
 
   @ViewChild("frameDiv") frame: ElementRef;
-  @ViewChild("frameDivLocal") frameLocal: ElementRef;
 
   constructor(
     private fb: FormBuilder,
@@ -36,7 +35,8 @@ export class CreateVideoComponent {
     private urlService: UrlService,
     private videoService: VideoService,
     private navService: NavStoreService,
-    private electronService: ElectronService,
+    public electronService: ElectronService,
+    private domSanitizer: DomSanitizer,
   ) {
     this.dirId = Number(this.route.snapshot.paramMap.get("id"));
     this.form = this.fb.group({
@@ -51,14 +51,18 @@ export class CreateVideoComponent {
 
   onClickPlay() {
     let url = this.form.controls["url"].value;
-    console.log(url);
     let token = this.urlService.extractToken(url);
-    console.log(token);
     this.player.loadVideoById(token);
   }
 
   ngAfterViewInit() {
-    this.frame.nativeElement.style.height = (this.frame.nativeElement.offsetWidth) * 9 / 16 + "px";
+    this.frame.nativeElement.style.height = ((this.frame.nativeElement.offsetWidth) * 9 / 16) + "px";
+    //TODO: fix this;
+    // if (this.electronService.isElectronApp) {
+    //   this.frame.nativeElement.style.height = ((this.frame.nativeElement.offsetWidth) * 9 / 19) + "px";
+    // } else {
+    //   this.frame.nativeElement.style.height = ((this.frame.nativeElement.offsetWidth) * 9 / 16) + "px";
+    // }
   }
 
   onSubmit() {
@@ -98,6 +102,7 @@ export class CreateVideoComponent {
   savePlayer(player: YT.Player) {
     this.player = player;
   }
+
   setValidators() {
     const urlControl = this.form.get('url');
 
@@ -106,8 +111,9 @@ export class CreateVideoComponent {
 
         if (value === 'YouTube') {
           urlControl.setValidators([Validators.required, this.urlValidator]);
+          this.localVidSelected = false;
         } else {
-          urlControl.setValidators(null);
+          urlControl.setValidators([Validators.required]);
         }
 
         urlControl.updateValueAndValidity();
@@ -121,7 +127,12 @@ export class CreateVideoComponent {
   localFileSelect() {
     if (this.electronService.isElectronApp) {
       let strings = this.electronService.remote.dialog.showOpenDialog({ properties: ['openFile'] });
-      console.log(strings);
+      let url = strings[0];
+      let objUrl = this.domSanitizer.bypassSecurityTrustUrl(url);
+      this.form.controls["url"].setValue(url);
+      this.localVidSelected = true; 
+      this.localVidSources = []; 
+      this.localVidSources = this.localVidSources.concat(objUrl);
     }
   }
 

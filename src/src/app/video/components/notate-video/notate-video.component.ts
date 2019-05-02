@@ -62,6 +62,8 @@ export class NotateVideoComponent implements OnInit {
           this.player.setUpYouTube(this.urlService.extractToken(videoEdit.url));
         } else if (videoEdit.isLocal) {
           if (this.electronService.isElectronApp) {
+            let sanitizedUrl = this.domSanitizer.bypassSecurityTrustUrl(videoEdit.url);
+            this.player.setUpLocal(sanitizedUrl);
           } else {
             this.fileSelector.nativeElement.click();
           }
