@@ -10,12 +10,16 @@
   (onPlayerReady)="saveLocalPlayer($event)"
 >
     <video 
-      width="100%" 
+      (pause)="localPaused()"
+      (play)="localPlayed()"
+      width="100%"
       height="100%" 
       [vgMedia]="media" 
       #media 
       preload="auto"
-      controls>
+      controls
+      autoplay
+    >
         <source *ngFor="let source of localSources" [src]="source">
     </video>
 </vg-player>

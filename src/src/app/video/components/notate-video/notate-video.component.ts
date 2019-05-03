@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { INoteInternal, NoteType } from 'src/app/services/models/video/note-internal';
 import { VideoType } from 'src/app/services/models/others/video-type';
 import { VideoService } from 'src/app/services/video.service';
@@ -23,14 +23,15 @@ export class NotateVideoComponent implements OnInit {
   VideoType = VideoType;
   NoteType = NoteType;
 
+  showVideoFields: boolean = true;
+
   videoInitiaLoadDone: boolean = false;
 
   notes: INoteInternal[] = [];
   token: string = "";
 
-  video: IVideoEdit;
-
-  pauseOrPlayName: string = "play";
+  video: IVideoEdit = <IVideoEdit>{ url: "", name: "", description: "", isVimeo: false, isYouTube: true, isLocal: false };
+  
   isPlaying: boolean = false;
 
   @ViewChild("player") player: VideoPlayerComponent;
@@ -46,11 +47,12 @@ export class NotateVideoComponent implements OnInit {
     private toastr: ToastrService,
     private location: Location,
     public electronService: ElectronService,
+    public changeDetectionRef: ChangeDetectorRef,
   ) {
     let id = Number(this.route.snapshot.paramMap.get("id"));
     this.videoService.getForEdit(id).pipe(take(1)).subscribe(
       videoEdit => {
-        this.toastr.success("Video Loaded: " + id, "Success!");
+        //this.toastr.success("Video Loaded: " + id, "Success!");
         this.video = videoEdit; 
         this.notes = videoEdit.notes;
         this.notateService.initialSet(videoEdit);
@@ -116,19 +118,23 @@ export class NotateVideoComponent implements OnInit {
 
     let borderColor: string; 
     let backgroundColor: string; 
+    let borderSize: number; 
 
     switch (type) {
       case NoteType.Note:
         backgroundColor = c.secondaryColor;
         borderColor = c.noteBorderColor;
+        borderSize = 1;
         break;
       case NoteType.TimeStamp:
         backgroundColor = c.timeStampBackgroundColor;
         borderColor = c.timeStampBorderColor;
+        borderSize = 1;
         break;
       case NoteType.Topic:
         backgroundColor = c.topicBackgroundColor;
         borderColor = c.topicBorderColor;
+        borderSize = 1;
         break;
     }
 
@@ -142,10 +148,10 @@ export class NotateVideoComponent implements OnInit {
       deleted: false,
       type: type,
       seekTo: this.player.getCurrentTime(),
-      backgroundColor: backgroundColor, 
+      backgroundColor: c.secondaryColor, 
       textColor: "white",
       borderColor: borderColor, 
-      borderThickness: 1, 
+      borderThickness: borderSize, 
       selectingColor: false,
       shouldExpand: false,
       formatting: 0,
@@ -172,6 +178,7 @@ export class NotateVideoComponent implements OnInit {
       newIds => {
         console.log("Save Success ", newIds);
         this.toastr.success("Save Success", "Success");
+        this.location.back();
       },
       error => {  
         console.log("SAVE_ERROR: ", error);
@@ -213,6 +220,33 @@ export class NotateVideoComponent implements OnInit {
     setTimeout(() => {
       this.videoInitiaLoadDone = true;
     }, 1);
+  }
+
+  changeYouTubeVideo() { 
+    this.player.setUpYouTube(this.urlService.extractToken(this.video.url));
+  }
+
+  changeLocalVideoElectron() { 
+    if (this.electronService.isElectronApp) {
+      let strings = this.electronService.remote.dialog.showOpenDialog({ properties: ['openFile'] });
+      let url = strings[0];
+      let objUrl = this.domSanitizer.bypassSecurityTrustUrl(url);
+      this.video.url = url;
+      this.player.setUpLocal(objUrl);
+    }
+  }
+
+  isPlayingSetter(e: boolean) {
+    this.isPlaying = e; 
+    this.changeDetectionRef.detectChanges();
+  }
+
+  playPause() { 
+    if (this.isPlaying) { 
+      this.player.pause(); 
+    } else {
+      this.player.play();
+    }
   }
 
 }

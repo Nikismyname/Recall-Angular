@@ -57,12 +57,6 @@ export class CreateVideoComponent {
 
   ngAfterViewInit() {
     this.frame.nativeElement.style.height = ((this.frame.nativeElement.offsetWidth) * 9 / 16) + "px";
-    //TODO: fix this;
-    // if (this.electronService.isElectronApp) {
-    //   this.frame.nativeElement.style.height = ((this.frame.nativeElement.offsetWidth) * 9 / 19) + "px";
-    // } else {
-    //   this.frame.nativeElement.style.height = ((this.frame.nativeElement.offsetWidth) * 9 / 16) + "px";
-    // }
   }
 
   onSubmit() {

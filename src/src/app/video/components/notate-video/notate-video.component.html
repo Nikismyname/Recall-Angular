@@ -3,6 +3,7 @@
   <div #frameDiv class="col-10">
       
     <app-video-player 
+        (isPlayingEmitter)="isPlayingSetter($event)"
         (videoInitialDoneEmitter)="videoInitialLoad()"
         #player
     ></app-video-player>
@@ -58,6 +59,65 @@
   <!-- SIDE_CONTROLLS^ -->
 </div>
 
+<!-- VIDEO FIELDS>  -->
+<div class="row mt-5" *ngIf="showVideoFields" >
+    <!-- URL> -->
+    <label class="col-2 col-form-label text-right">Url</label>
+    <div class="col-6">
+        <input 
+            [(ngModel)] = "video.url"
+            class="form-control-black mb-4" 
+            type="text" 
+        />
+    </div>
+    <div class="col-2">
+        <button
+            *ngIf="video.isYouTube"
+            class="btn btn-primary btn-block"
+            (click)="changeYouTubeVideo()"
+        >Play</button>
+        <button
+            *ngIf="video.isLocal && electronService.isElectronApp"
+            class="btn btn-primary btn-block"
+            (click)="changeLocalVideoElectron()"
+        >Select</button>
+        <button
+            *ngIf="video.isLocal && !electronService.isElectronApp"
+            class="btn btn-primary btn-block"
+            (click)="fileSelector.click()"
+        >Select</button>
+    </div>
+    <div class="col-2"></div>
+    <!-- URL^ -->
+    
+    <label class="col-2 col-form-label text-right">Name</label>
+    <div class="col-8">
+        <input 
+            [(ngModel)] = "video.name"
+            class="form-control-black mb-4" 
+            type="text" 
+        />
+    </div>
+    <div class="col-2"></div>
+
+    <label class="col-2 col-form-label text-right">Description</label>
+    <div class="col-6">
+        <input 
+            [(ngModel)] = "video.description"
+            class="form-control-black mb-4" 
+            type="text" 
+        />
+    </div>
+    <div class="col-2">
+        <button
+            class="btn btn-primary btn-block"
+            (click)="showVideoFields = !showVideoFields"
+        >Hide</button>
+    </div>
+    <div class="col-2"></div>
+</div>
+<!-- VIDEO FIELDS^  -->
+
 <!-- NOTES> -->
 <ng-template ngFor let-note [ngForOf]="getRootNotes()">
     <ng-container *ngTemplateOutlet="noteRec; context: {$implicit: note}"></ng-container>
@@ -83,21 +143,21 @@
         <div class="col no-padding">
             <button
                 (click)="addNewNote(null, NoteType.Note)"
-                class="col btn btn-primary btn-block" id="go-back">
+                class="col btn btn-primary btn-block" id="go-back"
             >Add Note</button>
         </div>
 
         <div class="col no-padding">
-                <button
-                    (click)="addNewNote(null, NoteType.Note)"
-                    class="col btn btn-primary btn-block" id="go-back">
-                >{{pauseOrPlayName}}</button>
+            <button
+                (click)="playPause()"
+                class="btn btn-primary btn-block" id="go-back"
+            >{{isPlaying? "Pause": "Play"}}</button>
         </div>
 
         <div class="col no-padding">
             <button
-            (click)="goBackToVideo()"
-            class="col btn btn-primary btn-block" id="go-back"
+                (click)="goBackToVideo()"
+                class="col btn btn-primary btn-block" id="go-back"
             >Go Back</button>
         </div>
 
@@ -115,16 +175,30 @@
             >New Topic</button>
         </div>
 
-        <!-- spacing -->
-        <div class="col"></div>
-        <div class="col"></div>
-        <div class="col"></div>
+        <div class="col no-padding">
+            <button
+                *ngIf="!showVideoFields"
+                (click)="showVideoFields = !showVideoFields"
+                class="col btn btn-primary btn-block"
+            >Show</button>
+        </div>
+
+        <div class="col no-padding">
+            <button
+                class="col btn btn-success btn-block"
+                (click)="save()" 
+            >Save</button>
+        </div>
+
+        <div class="col no-padding">
+            <button
+                (click)="back()"
+                class="col btn btn-danger btn-block"
+            >Back</button>
+        </div>
 
     </div>
 </div>
 <!-- BOTTOM_CONTROLLS^-->
 
 <input (change)="onFileSelected($event)" #fileSelector type="file" accept="video/*" hidden/>
-<button class="btn btn-primary" (click)="fileSelector.click()"> Select Video</button>
-<button class="btn btn-primary" (click)="save()"> Save </button>
-<button class="btn btn-danger" (click)="back()"> Back </button>

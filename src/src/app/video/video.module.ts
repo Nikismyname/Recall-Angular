@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CreateVideoComponent } from './components/create-video/create-video.component';
 import { VideoRoutingModule } from './video-routing.module';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms'; 
 
 import { NgxYoutubePlayerModule } from "ngx-youtube-player";
 import { YTPlayerModule, YTPlayerConfig } from 'angular-youtube-player';
@@ -32,6 +32,7 @@ const components = [
     CommonModule,
     VideoRoutingModule,
     ReactiveFormsModule,
+    FormsModule,
 
     NgxYoutubePlayerModule.forRoot(),
     YTPlayerModule,

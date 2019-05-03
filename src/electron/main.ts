@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { setInterval } from 'timers';
 
 let fromBuild: boolean = false;
 
@@ -13,8 +14,6 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-//require('electron-reload')(__dirname, { electron: require('${__dirname}/../../node_modules/electron') });
 
 function createWindow() {
   win = new BrowserWindow({
@@ -37,6 +36,16 @@ function createWindow() {
   } else {
     win.loadURL("http://localhost:4200");
   }
+
+  win.webContents.once('dom-ready', () => {
+    win.webContents.send("fromBuild", fromBuild);
+  });
+
+  app.getAppPath;
+
+  setInterval(() => { 
+    console.log(win.webContents.getURL());
+  },1000)
 
   win.webContents.openDevTools()
 

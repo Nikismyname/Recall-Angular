@@ -37,6 +37,7 @@ export class VideoNotateStoreServices {
             seekTo: seekTo,
             name: curr.name === prev.name ? null : curr.name,
             description: curr.description === prev.description ? null : curr.description,
+            url: curr.url === prev.url ? null : curr.url,
             newItems: this.generateNewNotes(curr),
             changes: this.generateChanges(curr, prev),
             finalSave: true,

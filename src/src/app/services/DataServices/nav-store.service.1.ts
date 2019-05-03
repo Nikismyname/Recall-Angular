@@ -10,6 +10,7 @@ import { IVideoIndex } from '../models/navigation/video-index';
 import { IDirChildIndex } from '../models/navigation/dir-child-index';
 import { RoutePaths } from '../route-paths';
 import { IReorderData } from '../models/others/reorder-data';
+import { ElectronService } from 'ngx-electron';
 
 @Injectable({
     providedIn: "root"
@@ -17,6 +18,7 @@ import { IReorderData } from '../models/others/reorder-data';
 export class NavStoreService {
 
     rootId: number = null;
+    electronFromBuild: boolean;
 
     constructor(
         private navigationService: NavigationService,
@@ -24,8 +26,15 @@ export class NavStoreService {
         private directoryService: DirectoryService,
         private toastr: ToastrService,
         private routePaths: RoutePaths,
+        private electronService: ElectronService,
     ) {
         this.navHistory = [];
+        if (this.electronService.isElectronApp) {
+            this.electronService.ipcRenderer.on("fromBuild", (event, fromBuild) => {
+                this.electronFromBuild = fromBuild;
+                console.log("Electron main porcess message revieved!");
+            });
+        }
     }
 
     private readonly _navIndex = new BehaviorSubject<INavIndex>(null);
@@ -53,7 +62,6 @@ export class NavStoreService {
         if (existingNav.length !== 1) { // there is no such nav in history!
             this.navigationService.getIndex(id).pipe(take(1)).subscribe(
                 nav => {
-                    
                     nav.subdirectories = nav.subdirectories.sort((a, b) => a.order - b.order);
                     nav.videos = nav.videos.sort((a, b) => a.order - b.order);
 
@@ -63,15 +71,15 @@ export class NavStoreService {
                     this.navHistory = this.navHistory.concat(nav);
                     this._navIndex.next(nav);
 
-                    let newId = id === -1? this.rootId : id;
-                    window.history.pushState(null, null, this.routePaths.indexPath+ "/" + newId);
+                    let newId = id === -1 ? this.rootId : id;
+                    
+                    this.updateUrl(newId); 
                 }, error => {
                     fetchError = true;
                     this.toastr.error(error.message, "Error");
                 });
         } else {
-            //console.log("PREEXISTIG NAV, ", id);
-            window.history.pushState(null, null, this.routePaths.indexPath+ "/" + id);
+            this.updateUrl(id);
             this._navIndex.next(existingNav[0]);
         }
     }
@@ -161,5 +169,15 @@ export class NavStoreService {
             } 
         );
         //...
+    }
+
+    updateUrl(id: number) { 
+        if (this.electronService.isElectronApp && this.electronFromBuild) {
+            let appPath = this.electronService.remote.app.getAppPath() + "/dist/recall";
+            let path = appPath + this.routePaths.indexPath + "/" + id;
+            window.history.pushState(null, null, path);
+        } else { // localhost based:
+            window.history.pushState(null, null, this.routePaths.indexPath + "/" + id);
+        }
     }
 }

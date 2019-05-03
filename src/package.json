@@ -12,7 +12,7 @@
     "electron": "ng build --prod=false --base-href ./ && tsc --p electron && electron .",
     "electron2": "tsc --p electron && electron .",
     "electron3": "electron .",
-    "build-electron-app":"electron-packager . --win32​"
+    "build-electron-app":"electron-packager . --out=../../Electron-Builds --win32​"
   },
   "private": true,
   "dependencies": {

@@ -12,9 +12,8 @@ import { ElectronService } from 'ngx-electron';
 export class VideoPlayerComponent {
   VideoType = VideoType;
 
-  localVideoUrl: string[] = ["file:///C:/Users/ASUS%20G751JY/AppData/Local/Google/Chrome/User%20Data/Default/Cache/Videos/1.Introduction/01.Improve%20your%20Angular%20architecture%20with%20NgRx.mp4"];
-
   @Output() videoInitialDoneEmitter: EventEmitter<void> = new EventEmitter();
+  @Output() isPlayingEmitter: EventEmitter<boolean> = new EventEmitter();
 
   isDone: boolean = false;
 
@@ -24,34 +23,45 @@ export class VideoPlayerComponent {
 
   youTubePlayer: YT.Player;
   token: string;
-  isFirstPlay: boolean = true;
+  isFirstPlayYouTube: boolean = true;
   youTubeSetUp: boolean = false;
+  newYouTubeVid: boolean = false;
 
   localPlayer: VgAPI;
   localSources: SafeUrl[];
   localSetUp: boolean = false;
+  newLocalVid: boolean = false;
+  isFirstPlayLocal: boolean = true;
 
   constructor(
     public electronService: ElectronService,
-  ) {}
+  ) { }
 
   setUpYouTube(token: string) {
+    if (this.youTubeSetUp) { 
+      this.youTubePlayer.loadVideoById(token);
+      this.youTubePlayer.seekTo(this.initialSeekToTime, true); 
+      console.log(this.initialSeekToTime);
+      this.newYouTubeVid = true;
+      return;
+    }
+
     this.type = VideoType.youTube;
     this.token = token;
     this.youTubeSetUp = true;
   }
 
   setUpLocal(url: SafeUrl) {
+    if (this.localSetUp) {
+      this.localSources = [];
+      this.localSources = this.localSources.concat(url);
+      this.newLocalVid = true;
+      return;
+    }
+
     this.localSources = [];
     this.localSources = this.localSources.concat(url);
-    console.log(url);
     this.type = VideoType.local;
-    //TODO: fix this shit
-    if (this.localSetUp) {
-      setTimeout(() => {
-        this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;
-      }, 100);
-    }
     this.localSetUp = true;
   }
 
@@ -115,7 +125,6 @@ export class VideoPlayerComponent {
   }
 
   public saveYouTubePlayer(player: YT.Player) {
-    console.log(player);
     this.youTubePlayer = player;
     this.youTubePlayer.seekTo(this.initialSeekToTime, true);
     this.youTubePlayer.mute();
@@ -128,15 +137,50 @@ export class VideoPlayerComponent {
     this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;
   }
 
+  counter: number = 0;
+
   youtubeChange(e) {
     console.log(e.data);
-    if (this.isFirstPlay) {
+    this.isPlayingEmitter.emit(Number(e.data) === 1);
+    if (this.isFirstPlayYouTube) {
       if (e.data === 1) {
-        this.isFirstPlay = false;
+        this.isFirstPlayYouTube = false;
         this.youTubePlayer.pauseVideo();
         this.youTubePlayer.unMute();
       }
     }
+
+    if (this.newYouTubeVid && e.data === -1) { 
+      this.counter++;
+      if (this.counter === 2) {
+        this.counter = 0;
+        this.newYouTubeVid = false;
+        this.youTubePlayer.seekTo(this.initialSeekToTime, true);
+        this.youTubePlayer.pauseVideo();
+        console.log("new vid ", this.initialSeekToTime);
+      }
+    }
+  }
+
+  localPaused() { 
+    this.isPlayingEmitter.emit(false);
+  }
+
+  localPlayed() { 
+    if (this.newLocalVid) { 
+      this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;
+      this.newLocalVid = false;
+      this.localPlayer.pause();
+      return;
+    }
+
+    if (this.isFirstPlayLocal) { 
+      this.localPlayer.pause();
+      this.isFirstPlayLocal = false; 
+      return;
+    }
+
+    this.isPlayingEmitter.emit(true);
   }
 
 }
