@@ -6,6 +6,7 @@
 >
     <div style="display:flex">
       <div 
+        [id]="note.inPageId"
         [innerHTML]="initialVal"
         [ngClass]="{'on-focus': note.shouldExpand, 'on-blur': !note.shouldExpand}"
         (input)="onContentChange($event)"

@@ -1,3 +1,4 @@
+<!-- {{this.counter % saveTime}} -->
 <div class="row">
   <!-- VIDEO SPACE> -->
   <div #frameDiv class="col-10">
@@ -28,21 +29,24 @@
 
     <button
         data-tip={c.createSubNoteButtnoDataTip}
-        class="btn btn-primary btn-block add-note" position="top">
-        Sub Note
-    </button>
+        class="btn btn-primary btn-block add-note" position="top"
+        [disabled]="subNoteInfo[0] === null"
+        (click)="addNewNote(subNoteInfo[0], NoteType.Note)"
+    >Sub Note</button>
 
     <button
         data-tip={c.createSSubNoteButtnoDataTip}
-        class="btn btn-primary btn-block add-note" position="top">
-        SSub Note
-    </button>
+        class="btn btn-primary btn-block add-note" position="top"
+        [disabled]="subNoteInfo[1] === null"
+        (click)="addNewNote(subNoteInfo[1], NoteType.Note)"
+    >SSub Note</button>
 
     <button
         data-tip={c.createSSSubNoteButtnoDataTip}
-        class="btn btn-primary btn-block add-note" position="top">
-        SSSub Note
-    </button>
+        class="btn btn-primary btn-block add-note" position="top"
+        [disabled]="subNoteInfo[2] === null"
+        (click)="addNewNote(subNoteInfo[2], NoteType.Note)"
+    >SSSub Note</button>
 
     <button
         (click)="addNewNote(null, NoteType.TimeStamp)"
@@ -61,6 +65,7 @@
 
 <!-- VIDEO FIELDS>  -->
 <div class="row mt-5" *ngIf="showVideoFields" >
+
     <!-- URL> -->
     <label class="col-2 col-form-label text-right">Url</label>
     <div class="col-6">
@@ -101,13 +106,24 @@
     <div class="col-2"></div>
 
     <label class="col-2 col-form-label text-right">Description</label>
-    <div class="col-6">
+    <div class="col-8">
         <input 
             [(ngModel)] = "video.description"
             class="form-control-black mb-4" 
             type="text" 
         />
     </div>
+    
+    <div class="col-2"></div>
+
+    <!-- OPTIONS> -->
+    <div class="offset-2 col-6">
+        <button 
+            class="btn btn-primary btn-block mb-4"
+            (click)="this.shouldShowOptions = !this.shouldShowOptions" 
+        >Options</button>
+    </div>
+
     <div class="col-2">
         <button
             class="btn btn-primary btn-block"
@@ -115,6 +131,21 @@
         >Hide</button>
     </div>
     <div class="col-2"></div>
+
+    <ng-template [ngIf]="this.shouldShowOptions">
+        <div class="offset-2 col-1">
+            <input 
+                [(ngModel)]="options.shouldAutoSave"
+                type="checkbox" 
+                class="form-control-black" 
+            />
+        </div>
+        <div class="col-7">
+            Autosave
+        </div>
+    </ng-template>
+    <!-- OPTIONS^ -->
+
 </div>
 <!-- VIDEO FIELDS^  -->
 
@@ -127,6 +158,7 @@
         (createChildEmitter)="addNewNote($event.id, $event.type)"
         (deleteEmitter)="deleteNote($event)" 
         (seekEmitter)="seekTo($event)"
+        (noteCreatedEmitter)="focusOnNewlyCreatedNote($event)"
     ></app-note>
     <div class="ml-3">
         <ng-template ngFor let-note [ngForOf]="getChildNotes(note.inPageId)">
@@ -202,3 +234,5 @@
 <!-- BOTTOM_CONTROLLS^-->
 
 <input (change)="onFileSelected($event)" #fileSelector type="file" accept="video/*" hidden/>
+
+<!-- <button (click)="this.autoSave()" class="btn btn-primary">AutoSave</button> -->

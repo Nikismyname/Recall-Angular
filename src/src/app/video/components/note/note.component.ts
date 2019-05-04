@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { INoteInternal, NoteType } from 'src/app/services/models/video/note-internal';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 
@@ -7,7 +7,7 @@ import { ContextMenuComponent } from 'ngx-contextmenu';
   templateUrl: './note.component.html',
   styleUrls: ['./note.component.css']
 })
-export class NoteComponent implements OnInit {
+export class NoteComponent implements OnInit, AfterViewInit {
 
   toggleBorderColor: boolean = false;
   toggleTextColor: boolean = false;
@@ -26,6 +26,7 @@ export class NoteComponent implements OnInit {
   @Output() createChildEmitter: EventEmitter<{ id: number, type: NoteType }> = new EventEmitter();
   @Output() deleteEmitter: EventEmitter<number> = new EventEmitter();
   @Output() seekEmitter: EventEmitter<number> = new EventEmitter();
+  @Output() noteCreatedEmitter: EventEmitter<number> = new EventEmitter();
 
   @ViewChild(ContextMenuComponent) public basicMenu: ContextMenuComponent;
 
@@ -72,6 +73,10 @@ export class NoteComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit() { 
+    this.noteCreatedEmitter.emit(this.note.inPageId);
   }
 
 }

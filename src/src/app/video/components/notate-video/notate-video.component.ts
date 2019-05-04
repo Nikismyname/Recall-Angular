@@ -19,7 +19,7 @@ import { ElectronService } from 'ngx-electron';
   templateUrl: './notate-video.component.html',
   styleUrls: ['./notate-video.component.css']
 })
-export class NotateVideoComponent implements OnInit {  
+export class NotateVideoComponent implements OnInit {
   VideoType = VideoType;
   NoteType = NoteType;
 
@@ -31,12 +31,24 @@ export class NotateVideoComponent implements OnInit {
   token: string = "";
 
   video: IVideoEdit = <IVideoEdit>{ url: "", name: "", description: "", isVimeo: false, isYouTube: true, isLocal: false };
-  
+
   isPlaying: boolean = false;
 
+  subNoteInfo: number[] = [null, null, null];
+
+  autoSaveInterval: NodeJS.Timer;
+
+  saveTime: number = 10;
+
+  shouldShowOptions: boolean = false;
+
+  options = {
+    shouldAutoSave: true,
+  };
+
   @ViewChild("player") player: VideoPlayerComponent;
-  @ViewChild("fileSelector") fileSelector: ElementRef; 
-  @ViewChild("frameDiv") frame: ElementRef; 
+  @ViewChild("fileSelector") fileSelector: ElementRef;
+  @ViewChild("frameDiv") frame: ElementRef;
 
   constructor(
     private videoService: VideoService,
@@ -53,10 +65,11 @@ export class NotateVideoComponent implements OnInit {
     this.videoService.getForEdit(id).pipe(take(1)).subscribe(
       videoEdit => {
         //this.toastr.success("Video Loaded: " + id, "Success!");
-        this.video = videoEdit; 
+        this.video = videoEdit;
         this.notes = videoEdit.notes;
         this.notateService.initialSet(videoEdit);
         this.notateService.setVideoId(id);
+        this.startAutoSave();
 
         this.player.initialSeekToTime = this.video.seekTo;
 
@@ -77,16 +90,16 @@ export class NotateVideoComponent implements OnInit {
       }
     )
   };
-  
+
   ngAfterViewInit() {
     this.frame.nativeElement.style.height = (this.frame.nativeElement.offsetWidth) * 9 / 16 + "px";
   }
 
-  getRootNotes():INoteInternal[] {
+  getRootNotes(): INoteInternal[] {
     return this.notes.filter(x => x.inPageParentId === null && x.deleted === false);
   };
 
-  getChildNotes(id: number): INoteInternal[] { 
+  getChildNotes(id: number): INoteInternal[] {
     let childNotes = this.notes.filter(x => x.inPageParentId === id && x.deleted === false);
     return childNotes;
   };
@@ -96,11 +109,10 @@ export class NotateVideoComponent implements OnInit {
 
   addNewNote(parentId: number = null, type: NoteType = NoteType.Note) {
 
-    let parentDbId: number = -1; 
+    let parentDbId: number = -1;
     let level: number = 0;
 
     if (parentId === null) {
-      
     } else {
       let parentNote = this.notes.filter(x => x.inPageId === parentId)[0];
       parentDbId = 0;
@@ -116,9 +128,23 @@ export class NotateVideoComponent implements OnInit {
 
     let inPageId = this.notes.length;
 
-    let borderColor: string; 
-    let backgroundColor: string; 
-    let borderSize: number; 
+    if (level === 0) {
+      for (let i = 1; i < this.subNoteInfo.length; i++) {
+        this.subNoteInfo[i] = null;
+      }
+      this.subNoteInfo[0] = inPageId;
+    } else if (parentId !== this.subNoteInfo[level - 1]) {
+      //Do nothing the user is adding subnotes to another note;
+    } else {
+      for (let i = level + 1; i < this.subNoteInfo.length; i++) {
+        this.subNoteInfo[i] = null;
+      }
+      this.subNoteInfo[level] = inPageId;
+    }
+
+    let borderColor: string;
+    let backgroundColor: string;
+    let borderSize: number;
 
     switch (type) {
       case NoteType.Note:
@@ -140,28 +166,26 @@ export class NotateVideoComponent implements OnInit {
 
     this.notes.push({
       id: 0, //no db id
-      inPageId: inPageId, 
+      inPageId: inPageId,
       inPageParentId: parentId, // null if root
-      parentDbId: parentDbId, 
+      parentDbId: parentDbId,
       content: "",
       level: level,
       deleted: false,
       type: type,
       seekTo: this.player.getCurrentTime(),
-      backgroundColor: c.secondaryColor, 
+      backgroundColor: c.secondaryColor,
       textColor: "white",
-      borderColor: borderColor, 
-      borderThickness: borderSize, 
+      borderColor: borderColor,
+      borderThickness: borderSize,
       selectingColor: false,
       shouldExpand: false,
       formatting: 0,
     });
-
-    console.log(this.notes);
   }
 
   deleteNote(id: number) {
-    this.deleteNoteRecursion(this.notes.filter(x=>x.inPageId === id)[0]);
+    this.deleteNoteRecursion(this.notes.filter(x => x.inPageId === id)[0]);
   }
 
   private deleteNoteRecursion(note: INoteInternal) {
@@ -171,20 +195,35 @@ export class NotateVideoComponent implements OnInit {
     }
 
     note.deleted = true;
-  } 
+  }
 
   save() {
-    this.notateService.save(this.video, this.player.getCurrentTime()).subscribe(
-      newIds => {
-        console.log("Save Success ", newIds);
-        this.toastr.success("Save Success", "Success");
-        this.location.back();
-      },
-      error => {  
-        console.log("SAVE_ERROR: ", error);
-        this.toastr.error("Save Failed!", "Error");
-       },
-    );
+    let playerSeekTo = this.player.getCurrentTime()
+    let seekDiference = this.video.seekTo - playerSeekTo;
+    if (Math.abs(seekDiference) > 2) {
+      this.video.seekTo = playerSeekTo;
+    }
+
+    let result = this.notateService.save(this.video);
+    if (result === null) {
+      console.log("No Changes");
+      this.toastr.info("No Changes To Save!", "Info");
+      this.location.back();
+    } else {
+      result
+        .pipe(take(1))
+        .subscribe(
+          newIds => {
+            console.log("Save Success ", newIds);
+            this.toastr.success("Save Success", "Success");
+            this.location.back();
+          },
+          error => {
+            console.log("SAVE_ERROR: ", error);
+            this.toastr.error("Save Failed!", "Error");
+          },
+        );
+    }
   }
 
   onFileSelected(e) {// for video player
@@ -206,7 +245,7 @@ export class NotateVideoComponent implements OnInit {
 
   pausePlay() {
     if (this.isPlaying) {
-      this.player.pause(); 
+      this.player.pause();
     } else {
       this.player.play();
     }
@@ -222,11 +261,11 @@ export class NotateVideoComponent implements OnInit {
     }, 1);
   }
 
-  changeYouTubeVideo() { 
+  changeYouTubeVideo() {
     this.player.setUpYouTube(this.urlService.extractToken(this.video.url));
   }
 
-  changeLocalVideoElectron() { 
+  changeLocalVideoElectron() {
     if (this.electronService.isElectronApp) {
       let strings = this.electronService.remote.dialog.showOpenDialog({ properties: ['openFile'] });
       let url = strings[0];
@@ -237,16 +276,78 @@ export class NotateVideoComponent implements OnInit {
   }
 
   isPlayingSetter(e: boolean) {
-    this.isPlaying = e; 
+    this.isPlaying = e;
     this.changeDetectionRef.detectChanges();
   }
 
-  playPause() { 
-    if (this.isPlaying) { 
-      this.player.pause(); 
+  playPause() {
+    if (this.isPlaying) {
+      this.player.pause();
     } else {
       this.player.play();
     }
+  }
+
+  counter = 1;
+
+  startAutoSave() {
+    this.autoSaveInterval = setInterval(() => {
+
+      if (!this.options.shouldAutoSave) { return; }
+
+      this.counter++;
+      if (this.counter % this.saveTime === 0) {
+        this.autoSave();
+      }
+    }, 1000)
+  }
+
+  autoSave() {
+    let playerSeekTo = this.player.getCurrentTime()
+    let seekDiference = this.video.seekTo - playerSeekTo;
+    if (Math.abs(seekDiference) > 2) {
+      this.video.seekTo = playerSeekTo;
+    }
+
+    let result = this.notateService.save(this.video);
+    if (result === null) {
+      console.log("No Changes");
+      this.toastr.info("No Changes To Save!", "Info");
+    } else {
+      result
+        .pipe(take(1))
+        .subscribe(
+          newIds => {
+            //console.log("Partial Save Success ", newIds);
+            this.toastr.success("Partial Save Success", "Success");
+            for (let i = 0; i < newIds.length; i++) {
+              let newId = newIds[i];
+              let ipId = newId[0];
+              let dbId = newId[1];
+
+              let note = this.video.notes.filter(x => x.inPageId === ipId)[0];
+              note.id = dbId;
+            }
+
+            this.notateService.setIdsToPrevious(newIds); 
+          },
+          error => {
+            //console.log("Partial Save Error ", error);
+            this.toastr.error("Partial Save Failed!", "Error");
+          },
+        );
+    }
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.autoSaveInterval);
+  }
+
+  focusOnNewlyCreatedNote(id: number) {
+    setTimeout(() => {
+      let el: HTMLElement = document.getElementById(id.toString());
+      el.focus();
+    }, 1);
   }
 
 }

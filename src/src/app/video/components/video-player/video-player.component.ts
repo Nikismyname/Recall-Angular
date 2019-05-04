@@ -41,7 +41,6 @@ export class VideoPlayerComponent {
     if (this.youTubeSetUp) { 
       this.youTubePlayer.loadVideoById(token);
       this.youTubePlayer.seekTo(this.initialSeekToTime, true); 
-      console.log(this.initialSeekToTime);
       this.newYouTubeVid = true;
       return;
     }
@@ -140,7 +139,6 @@ export class VideoPlayerComponent {
   counter: number = 0;
 
   youtubeChange(e) {
-    console.log(e.data);
     this.isPlayingEmitter.emit(Number(e.data) === 1);
     if (this.isFirstPlayYouTube) {
       if (e.data === 1) {
@@ -157,7 +155,6 @@ export class VideoPlayerComponent {
         this.newYouTubeVid = false;
         this.youTubePlayer.seekTo(this.initialSeekToTime, true);
         this.youTubePlayer.pauseVideo();
-        console.log("new vid ", this.initialSeekToTime);
       }
     }
   }

@@ -3,6 +3,7 @@ import { IVideoEdit } from '../models/video/video-edit';
 import { VideoService } from '../video.service';
 import { Observable } from 'rxjs';
 import { IVideoSave } from '../models/video/video-save';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: "root" })
 export class VideoNotateStoreServices {
@@ -12,6 +13,7 @@ export class VideoNotateStoreServices {
 
     constructor(
         private videoService: VideoService,
+        private toastr: ToastrService,
     ) { }
 
     setVideoId(id: number) {
@@ -24,7 +26,7 @@ export class VideoNotateStoreServices {
         this.history.push(vid);
     }
 
-    save(video: IVideoEdit, seekTo: number = 0): Observable<number[][]> {
+    save(video: IVideoEdit): Observable<number[][]> {
         var vid = Object.assign({}, video);
         vid.notes = JSON.parse(JSON.stringify(vid.notes));
         this.history.push(vid);
@@ -34,7 +36,7 @@ export class VideoNotateStoreServices {
 
         let saveData: IVideoSave = {
             videoId: this.videoId,
-            seekTo: seekTo,
+            seekTo: curr.seekTo === prev.seekTo ? null : curr.seekTo,
             name: curr.name === prev.name ? null : curr.name,
             description: curr.description === prev.description ? null : curr.description,
             url: curr.url === prev.url ? null : curr.url,
@@ -43,9 +45,18 @@ export class VideoNotateStoreServices {
             finalSave: true,
         };
 
-        console.log(saveData);
-
-        return this.videoService.save(saveData);
+        if (
+            saveData.seekTo === null &&
+            saveData.name === null &&
+            saveData.description === null &&
+            saveData.url === null &&
+            saveData.newItems.length === 0 &&
+            saveData.changes.length === 0
+        ) {
+            return null;
+        } else {
+            return this.videoService.save(saveData);
+        }
     }
 
     generateNewNotes(curr: IVideoEdit) {
@@ -61,10 +72,13 @@ export class VideoNotateStoreServices {
 
     generateChanges(curr: IVideoEdit, prev: IVideoEdit): any[][] {
         let changes = [];
-        let exstNotesNewState = curr.notes.filter(x => x.id > 0 && x.id != null).sort((a, b) => a.id - b.id);
+        let exstNotesNewState = curr.notes.filter(x => x.id != null && x.id > 0).sort((a, b) => a.id - b.id);
         let exstNotesOldState = prev.notes.sort((a, b) => a.id - b.id);
 
-        if (exstNotesNewState.length != exstNotesOldState.length) { alert("The old and new state of preexisting notes does note match!"); }
+        //console.log("PREV ", exstNotesOldState);
+        //console.log("CURR ", exstNotesNewState);
+
+        if (exstNotesNewState.length !== exstNotesOldState.length) { alert("1 existing notes length problem"); }
 
         let counter = 0;
         let monitoredProperties =
@@ -76,29 +90,46 @@ export class VideoNotateStoreServices {
                 "type",
                 "borderColor",
                 "borderThickness",
-                "backgroundColor", 
+                "backgroundColor",
                 "textColor",
             ];
         for (var i = 0; i < exstNotesNewState.length; i++) {
             var newStateNote = exstNotesNewState[i];
             var oldStateNote = exstNotesOldState[i];
 
-            if (newStateNote.id != oldStateNote.id) { alert("New and old state of preexisting notes do not match"); }
+            if (newStateNote.id !== oldStateNote.id) {
+                console.log("NewID ", newStateNote.id);
+                console.log("OldID ", oldStateNote.id);
+                alert("2 New and old state of preexisting notes do not match");
+            }
 
             for (let prop of monitoredProperties) {
                 let oldValue = oldStateNote[prop];
                 let newValue = newStateNote[prop];
-                console.log(prop, oldValue, newValue);
+                //console.log(prop, oldValue, newValue);
                 if (oldValue != newValue) {
                     changes[counter] = [];
                     changes[counter][0] = newStateNote.id;
                     changes[counter][1] = prop;
                     changes[counter][2] = newValue;
                     counter++;
-                    console.log("Change:", changes[counter]);
+                    //console.log("Change:", changes[counter]);
                 }
             }
         }
         return changes;
+    }
+
+    setIdsToPrevious(newIds: number[][]) {
+        for (let i = 0; i < newIds.length; i++) {
+            let newId = newIds[i];
+            let ipId = newId[0];
+            let dbId = newId[1];
+
+            let video = this.history[this.history.length - 1];
+
+            let note = video.notes.filter(x => x.inPageId === ipId)[0];
+            note.id = dbId;
+        }
     }
 }
