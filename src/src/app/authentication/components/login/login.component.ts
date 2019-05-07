@@ -8,6 +8,7 @@ import { UserService } from "../../../services/user.service";
 import { take } from "rxjs/operators" 
 import { AuthStoreService } from 'src/app/services/DataServices/auth-store.service';
 import { IUser } from 'src/app/services/models/authentication/user';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -29,6 +30,7 @@ export class LoginComponent {
     private userService: UserService,
     private authStoreService: AuthStoreService,
     private router: Router,
+    private toastr: ToastrService,
   ) {
   }
 
@@ -42,13 +44,16 @@ export class LoginComponent {
         }; 
         this.authStoreService.setUser(setUserData);
 
-        this.router.navigate([""]);
-
         localStorage.setItem("user", JSON.stringify(setUserData));
         localStorage.setItem("token", setUserData.token)
+
+        this.toastr.success("Successfully Logged In!");
+
+        this.router.navigate([""]);
       },
       error => {
-        console.log("LOGIN_FAIL");
+        this.toastr.error("Login Failed!");
+        console.log("LOGIN_FAIL", error);
       })
   }
 }

@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RoutesNoSlash, forFeatureRouting } from "../services/route-paths"; 
+//import { RoutesNoSlash, forFeatureRouting } from "../services/route-paths"; 
 import { NavigationComponent } from './components/navigation/navigation.component';
 
 const routes: Routes = [
     {
-        path: forFeatureRouting(RoutesNoSlash.indexPath)+ "/:id",
+        path: "index/:id",
         component: NavigationComponent,
     }
 ]

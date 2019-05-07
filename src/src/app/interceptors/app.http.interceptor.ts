@@ -1,7 +1,13 @@
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from "@angular/common/http"
 import { Observable } from "rxjs";
+import { environment } from 'src/environments/environment';
 
-const urlRoot = "https://localhost:44341/api";
+let urlRoot: string; 
+if (environment.production) { 
+    urlRoot = "/api";
+} else {
+    urlRoot = "https://localhost:44341/api";
+}
 
 export class AppHttpInterceptor implements HttpInterceptor{
 

@@ -8,6 +8,7 @@ import { RoutesNoSlash } from "../../../services/route-paths";
 import { IRegisterData } from 'src/app/services/models/authentication/register-data';
 import { UserService } from "../../../services/user.service";
 import { take } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -21,6 +22,7 @@ export class RegisterComponent {
   constructor(
     private router: Router,
     private userService: UserService,
+    private toastr: ToastrService,
   ) {
     this.formData = this.generateForm();
   }
@@ -68,9 +70,11 @@ export class RegisterComponent {
   onFormSubmit(data: IRegisterData) {
     this.userService.register(data).pipe(take(1)).subscribe(
       () => {
+        this.toastr.success("Successfully Registered!");
         this.router.navigate([RoutesNoSlash.loginPath]);
       },
       error => {
+        this.toastr.error("Regster Failed!");
         console.log("REGISTER_FAILED");
       }
     )

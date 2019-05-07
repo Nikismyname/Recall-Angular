@@ -1,16 +1,16 @@
 import { NgModule } from "@angular/core"; 
 import { RouterModule, Routes } from '@angular/router';
-import { RoutesNoSlash, forFeatureRouting } from '../services/route-paths'; 
+//import { RoutesNoSlash, forFeatureRouting } from '../services/route-paths'; 
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 
 const routes: Routes = [
     {
-        path: forFeatureRouting(RoutesNoSlash.loginPath),
+        path: "login",
         component: LoginComponent
     },
     {
-        path: forFeatureRouting(RoutesNoSlash.registerPath),
+        path: "register",
         component: RegisterComponent
     },
 ]
