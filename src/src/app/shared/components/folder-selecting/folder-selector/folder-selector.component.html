@@ -1,0 +1,21 @@
+<h1> Folder Picker </h1>
+<getready-folder-recursion
+  *ngIf="loaded"
+  (selected)="folderSelected($event)"
+  (folded)="folderFolded($event)"
+  [currentNode] ="root"
+  [allNotes] = "folders"
+  [selectedId] = "selectedId"
+  [foldedFolders]= "foldedFolders"
+></getready-folder-recursion>
+<div class="row">
+  <div class="col-2">
+    <button class="btn btn-primary btn-block" (click)="folderFinalChosen()">Select</button>
+  </div>
+  <div class="col-2">
+    <button class="btn btn-primary btn-block" (click)="onClickCreateFolder()">Create Dir</button>
+  </div>
+  <div class="col-2">
+      <button class="btn btn-primary btn-block" (click)="back()">Back</button>
+  </div>
+</div>

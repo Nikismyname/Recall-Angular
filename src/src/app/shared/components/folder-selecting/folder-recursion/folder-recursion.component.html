@@ -1,0 +1,23 @@
+<div *ngIf="loaded">
+  <i (click)="onClickFold()"
+  [ngClass]="{'arrow right': isFolded, 'arrow down': !isFolded}"
+  ></i>
+  <div style="display: inline-block; cursor: default" 
+    class="pl-2 pr-2"
+    [ngClass]="{'node-selected': isSelected}"
+    (click)="onClickNode(currentNode.id)">
+    {{currentNode.name}}
+  </div>
+  <div *ngIf="!isFolded" class="ml-4">
+    <getready-folder-recursion 
+      *ngFor="let folder of getChildFolders()" 
+      (selected)="childEmitedSelected($event)"
+      (folded)="childEmitedFolded($event)"
+      [currentNode]="folder" 
+      [allNotes]="allNotes" 
+      [selectedId]="_selectedId"
+      [foldedFolders] = "_foldedFolders"
+    >
+    </getready-folder-recursion>
+  </div>
+</div>

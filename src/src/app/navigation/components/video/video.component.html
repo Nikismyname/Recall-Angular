@@ -14,7 +14,7 @@
     Delete
   </ng-template>
   <ng-template contextMenuItem divider="true"></ng-template>
-  <ng-template contextMenuItem let-item>
-    Something Else
+  <ng-template contextMenuItem (execute)="move()">
+    Move
   </ng-template>
 </context-menu> 

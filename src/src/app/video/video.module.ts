@@ -19,6 +19,9 @@ import { ContextMenuModule } from 'ngx-contextmenu';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { Test1Component } from './components/RichTextEditorTests/test1/test1.component';
 import { CustomYoutubePlayerComponent } from './components/custom-youtube-player/custom-youtube-player.component';
+import { ImportVideosComponent } from './components/import-videos/import-videos.component';
+
+import { SharedModule } from '../shared/shared.module';
 
 const components = [
   CreateVideoComponent,
@@ -27,7 +30,7 @@ const components = [
 ]; 
 
 @NgModule({
-  declarations: [...components, NoteComponent, Test1Component, CustomYoutubePlayerComponent],
+  declarations: [...components, NoteComponent, Test1Component, CustomYoutubePlayerComponent, ImportVideosComponent],
   imports: [
     CommonModule,
     VideoRoutingModule,
@@ -47,6 +50,8 @@ const components = [
     VgControlsModule,
     VgOverlayPlayModule,
     VgBufferingModule,
+
+    SharedModule,
   ],
   providers: [
     {

@@ -10,18 +10,19 @@ import { NavigationRoutingModule } from './navigation-routing.module';
 import { VideoColumnComponent } from './components/video-column/video-column.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ContextMenuModule } from 'ngx-contextmenu';
+import { MoveVideoComponent } from './components/move-video/move-video.component';
+
+import { SharedModule } from '../shared/shared.module';
  
 const components = [
   NavigationComponent,
-
   AllVideosComponent,
   VideoColumnComponent,
   VideoComponent,
-
   DirComponent,
   DirListComponent,
-
-  CurrentDirComponent,
+  CurrentDirComponent, 
+  MoveVideoComponent
 ];
 
 @NgModule({
@@ -33,6 +34,7 @@ const components = [
     ContextMenuModule.forRoot({
       useBootstrap4: true
     }), 
+    SharedModule,
   ]
 })
 export class NavigationModule { }

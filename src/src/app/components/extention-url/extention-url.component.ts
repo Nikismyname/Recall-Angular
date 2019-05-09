@@ -15,8 +15,9 @@ export class ExtentionUrlComponent {
     private extentionService: ExtentionUrlService,
     private authService: AuthStoreService,
   ) { 
-    route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(params => {
       let url = params["url"];
+      this.extentionService.registerUrlToSet(url);
     });
   }
 

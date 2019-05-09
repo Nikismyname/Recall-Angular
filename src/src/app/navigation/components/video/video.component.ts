@@ -36,4 +36,8 @@ export class VideoComponent implements OnInit {
     this.navService.deleteVideo(this.video.id);
   }
 
+  move() { 
+    this.router.navigate([RoutesNoSlash.videoMovePath + "/" + this.video.id]);
+  }
+
 }

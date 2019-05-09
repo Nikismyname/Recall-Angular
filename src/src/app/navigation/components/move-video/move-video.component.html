@@ -1,0 +1,6 @@
+<getready-folder-selector
+  *ngIf="foldersLoaded"
+  [folders]="allFolders"
+  (folderSelectedEmitter)="onFolderSelected($event)"
+  (folderCreatedRefresh)="refreshFolders()"
+></getready-folder-selector>
