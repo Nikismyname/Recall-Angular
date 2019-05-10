@@ -10,6 +10,7 @@ export namespace RoutesNoSlash {
     export const videoCreatePath = "video/create";
     export const videoNotePath = "video/note";
     export const videoSearchPath = "video/search";
+    export const videoImportPath = "video/import";
 }
 
 @Injectable({
@@ -25,6 +26,7 @@ export class RoutePaths {
     public videoCreatePath = "/" +RoutesNoSlash.videoCreatePath;
     public videoNotePath= "/" +RoutesNoSlash.videoNotePath;
     public videoSearchPath = "/" + RoutesNoSlash.videoSearchPath;
+    public videoImportTath = "/" + RoutesNoSlash.videoImportPath;
 }
 
 export function forFeatureRouting(path: string) {

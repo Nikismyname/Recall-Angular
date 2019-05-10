@@ -8,4 +8,6 @@ export interface IUserWithToken {
     role: string;
     
     token: string;
+
+    rootDirectoryId: number;
 }

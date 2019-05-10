@@ -44,17 +44,29 @@ export class NavStoreService {
 
     private navHistory: INavIndex[];
 
+    setRootId(id: number) {
+        this.rootId = id;
+    }
+
+    getRootId(): number { 
+        return this.rootId;
+    }
+
+    getCurrentId(): number { 
+        if (this._navIndex.getValue() === null) { 
+            return null;
+        } else {
+            return this._navIndex.getValue().id;
+        }
+    }
+
     setNav(id: number) {
-        let fetchingRoot: boolean = false;
-        let fetchError: boolean = false;
 
         if (this.rootId && id === -1) {
             id = this.rootId;
-            //console.log("KNOWN_ROOT, ",id);
-        } else if (!this.rootId && id === -1) {
-            fetchingRoot = true;
         }
 
+        ///Already the current Nav Element
         if (this._navIndex.getValue() && this._navIndex.getValue().id === id) {
             return;
         }
@@ -65,10 +77,7 @@ export class NavStoreService {
                 nav => {
                     nav.subdirectories = nav.subdirectories.sort((a, b) => a.order - b.order);
                     nav.videos = nav.videos.sort((a, b) => a.order - b.order);
-
-                    if (fetchingRoot) {
-                        this.rootId = nav.id;
-                    }
+                    
                     this.navHistory = this.navHistory.concat(nav);
                     this._navIndex.next(nav);
 
@@ -76,7 +85,6 @@ export class NavStoreService {
 
                     this.updateUrl(newId);
                 }, error => {
-                    fetchError = true;
                     this.toastr.error(error.message, "Error");
                 });
         } else {

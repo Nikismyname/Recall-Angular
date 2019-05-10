@@ -7,7 +7,8 @@ import { IVideoIndex } from './models/navigation/video-index';
 import { IVideoMove } from './models/video/video-move';
 import { IVideoMoveWithOrigin } from './models/video/video-move-with-origin';
 import { IExtensionAddData } from './models/video/extension-add-data';
-import { IConvertExtensionData } from './models/video/convert-sxtension-data';
+import { IConvertExtensionData } from './models/video/convert-extension-data';
+import { IExtensionAddDataWithId } from './models/video/extension-add-data-with-id';
 
 @Injectable({
     providedIn: 'root'
@@ -45,7 +46,7 @@ export class VideoService {
     } 
 
     getExtensionVideos = () => { 
-        return this.http.get<IExtensionAddData[]>("Video/GetExtesionVideos");
+        return this.http.get<IExtensionAddDataWithId[]>("Video/GetExtesionVideos");
     }
 
     ConvertExtensionVideo = (data: IConvertExtensionData) => { 

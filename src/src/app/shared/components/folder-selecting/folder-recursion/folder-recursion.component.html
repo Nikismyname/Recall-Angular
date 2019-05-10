@@ -5,7 +5,9 @@
   <div style="display: inline-block; cursor: default" 
     class="pl-2 pr-2"
     [ngClass]="{'node-selected': isSelected}"
-    (click)="onClickNode(currentNode.id)">
+    (click)="onClickNode(currentNode.id)"
+    (dblclick)="onDoubleClick()"
+  >
     {{currentNode.name}}
   </div>
   <div *ngIf="!isFolded" class="ml-4">

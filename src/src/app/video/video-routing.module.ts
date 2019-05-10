@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core"
 import { RouterModule, Routes } from '@angular/router';
 import { CreateVideoComponent } from './components/create-video/create-video.component';
 import { NotateVideoComponent } from './components/notate-video/notate-video.component';
+import { ImportVideosComponent } from './components/import-videos/import-videos.component';
 
 const routes: Routes = [
     {
@@ -11,6 +12,10 @@ const routes: Routes = [
     {
         path: "note/:id",
         component: NotateVideoComponent,
+    },
+    {
+        path: "import",
+        component: ImportVideosComponent,
     }
 ];
 

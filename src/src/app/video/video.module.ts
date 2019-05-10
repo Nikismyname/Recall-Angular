@@ -26,11 +26,16 @@ import { SharedModule } from '../shared/shared.module';
 const components = [
   CreateVideoComponent,
   NotateVideoComponent,
-  VideoPlayerComponent
+  VideoPlayerComponent,
+  NoteComponent,
+  CustomYoutubePlayerComponent,
+  ImportVideosComponent,
+
+  Test1Component
 ]; 
 
 @NgModule({
-  declarations: [...components, NoteComponent, Test1Component, CustomYoutubePlayerComponent, ImportVideosComponent],
+  declarations: [...components],
   imports: [
     CommonModule,
     VideoRoutingModule,

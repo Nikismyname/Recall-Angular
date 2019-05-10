@@ -5,4 +5,6 @@ export interface IUser
   token: string;
 
   role: string;
+
+  rootDirectoryId: number;
 }

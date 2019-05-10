@@ -12,7 +12,7 @@ export class FolderRecursionComponent implements OnInit {
    
   _foldedFolders: number[] = [];
   _selectedId: number = null;
-           
+
   @Input() currentNode: IFolderSelectData;
   allNotes: IFolderSelectData[];
   @Input("allNotes") set allNotesSetter(data: IFolderSelectData[]) { 
@@ -29,7 +29,7 @@ export class FolderRecursionComponent implements OnInit {
     this._selectedId = selectedId;
   }
 
-  @Output() selected: EventEmitter<number> = new EventEmitter();
+  @Output() selected: EventEmitter<{id: number, doubleClick: boolean}> = new EventEmitter();
   @Output() folded: EventEmitter<number> = new EventEmitter();
 
   loaded: boolean = false;
@@ -48,7 +48,7 @@ export class FolderRecursionComponent implements OnInit {
   }
 
   onClickNode() {
-    this.selected.emit(this.currentNode.id);
+    this.selected.emit({ id: this.currentNode.id , doubleClick: false});
   }
   childEmitedSelected(e) {    
     this.selected.emit(e);
@@ -59,6 +59,10 @@ export class FolderRecursionComponent implements OnInit {
   }
   childEmitedFolded(e) {
     this.folded.emit(e); 
+  }
+
+  onDoubleClick() { 
+    this.selected.emit({ id: this.currentNode.id , doubleClick: true});
   }
   
 }

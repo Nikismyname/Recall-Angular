@@ -9,6 +9,7 @@ import { take } from "rxjs/operators"
 import { AuthStoreService } from 'src/app/services/DataServices/auth-store.service';
 import { IUser } from 'src/app/services/models/authentication/user';
 import { ToastrService } from 'ngx-toastr';
+import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
 
 @Component({
   selector: 'app-login',
@@ -41,6 +42,7 @@ export class LoginComponent {
           username: loginData.username,
           role: loginData.role,   
           token: loginData.token,
+          rootDirectoryId: loginData.rootDirectoryId,
         }; 
         this.authStoreService.setUser(setUserData);
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IFolderSelectData } from 'src/app/services/models/others/folder-select-data';
 import { DirectoryService } from 'src/app/services/directory.service';
 import { take } from 'rxjs/operators';
@@ -10,7 +10,7 @@ import { Location } from '@angular/common';
   templateUrl: './folder-selector.component.html',
   styleUrls: ['./folder-selector.component.css']
 })
-export class FolderSelectorComponent implements OnInit {
+export class FolderSelectorComponent {
 
   constructor(
     private directoryService: DirectoryService,
@@ -21,9 +21,17 @@ export class FolderSelectorComponent implements OnInit {
   folders: IFolderSelectData[];
   @Input("folders") set foldersSetter(incFolders: IFolderSelectData[]) {
     this.folders = incFolders;
+    if (this.folders.length > 0) {
+      this.root = this.folders.filter(x => x.parentId === null)[0];
+      this.loaded = true;
+    } else {
+      this.loaded = false;
+    }
   };
+  @Input() parentHandlesBack: boolean = false;
   @Output() folderSelectedEmitter: EventEmitter<number> = new EventEmitter();
   @Output() folderCreatedRefresh: EventEmitter<void> = new EventEmitter();
+  @Output() backEmitter: EventEmitter<void> = new EventEmitter();
 
   areCreatingFolder: boolean = false;
 
@@ -32,13 +40,11 @@ export class FolderSelectorComponent implements OnInit {
   selectedId: number = null;
   foldedFolders: number[] = [];
 
-  ngOnInit() {
-    this.root = this.folders.filter(x => x.parentId === null)[0];
-    this.loaded = true;
-  }
-
   folderSelected(e) {
-    this.selectedId = e;
+    this.selectedId = e.id;
+    if (e.doubleClick) {
+      this.folderSelectedEmitter.emit(e.id);
+    }
   }
 
   folderFolded(id) {
@@ -73,7 +79,11 @@ export class FolderSelectorComponent implements OnInit {
   }
 
   back() {
-    this.location.back();
+    if (!this.parentHandlesBack) {
+      this.location.back();
+    } else {
+      this.backEmitter.emit();
+    }
   }
 
 }

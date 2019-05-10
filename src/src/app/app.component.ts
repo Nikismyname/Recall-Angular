@@ -4,6 +4,8 @@ import { ElectronService } from 'ngx-electron';
 import { NavStoreService } from './services/DataServices/nav-store.service.1';
 import { take } from 'rxjs/operators';
 import { VideoService } from './services/video.service';
+import { ToastrService } from 'ngx-toastr';
+import { IUser } from './services/models/authentication/user';
 
 @Component({
   selector: 'app-root',
@@ -18,14 +20,15 @@ export class AppComponent {
     private electronService: ElectronService,
     private navService: NavStoreService,
     private videoService: VideoService,
+    private toastr: ToastrService,
   ) {
     if (this.electronService.isElectronApp) {
       electronService.webFrame.setZoomFactor(1.75);
     }
 
-    let loginData = localStorage.getItem("user");
+    let loginData = <IUser>JSON.parse(localStorage.getItem("user"));
     if (loginData !== null) {
-      this.authService.setUser(JSON.parse(loginData));
+      this.authService.setUser(loginData);
     }
 
     window.addEventListener("message", event => {
@@ -56,7 +59,13 @@ export class AppComponent {
     }
 
     if (chooseLater) {
-          
+      this.videoService.addExtension({
+        name: name,
+        url: url,
+      }).pipe(take(1)).subscribe(() => { }, error => {
+        console.log(error);
+        this.toastr.error("Filed at storing Extension Video!");
+      });
     } else if (current) {
       let videoName = name;
       if (videoName.length > 40) {
@@ -73,7 +82,7 @@ export class AppComponent {
       }).pipe(take(1)).subscribe(videoNav => {
         this.navService.registerCreatedVideo(videoNav);
       });
-    } else if (root) { 
+    } else if (root) {
       let videoName = name;
       if (videoName.length > 40) {
         videoName = name.slice(0, 37) + "...";
@@ -86,7 +95,7 @@ export class AppComponent {
         isYouTube: true,
         isVimeo: false,
         isLocal: false
-      }).pipe(take(1)).subscribe(videoNav => { 
+      }).pipe(take(1)).subscribe(videoNav => {
         this.navService.registerCreatedVideo(videoNav, -1);
       });
     }
