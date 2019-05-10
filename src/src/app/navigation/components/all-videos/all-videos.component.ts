@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { IVideoIndex } from 'src/app/services/models/navigation/video-index';
 import { ReorderService } from 'src/app/services/reorder.service';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 
 @Component({
   selector: 'app-all-videos',

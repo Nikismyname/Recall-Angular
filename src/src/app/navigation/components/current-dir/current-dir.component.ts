@@ -3,7 +3,7 @@ import { RoutePaths } from 'src/app/services/route-paths';
 import { INavIndex } from 'src/app/services/models/navigation/nav-index';
 import { DirectoryService } from 'src/app/services/directory.service';
 import { take } from 'rxjs/operators';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 import { VideoService } from 'src/app/services/video.service';
 
 @Component({

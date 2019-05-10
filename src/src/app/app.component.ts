@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { AuthStoreService } from './services/DataServices/auth-store.service';
+import { AuthStoreService } from './services/data-services/auth-store.service';
 import { ElectronService } from 'ngx-electron';
-import { NavStoreService } from './services/DataServices/nav-store.service.1';
+import { NavStoreService } from './services/data-services/nav-store.service.1';
 import { take } from 'rxjs/operators';
 import { VideoService } from './services/video.service';
 import { ToastrService } from 'ngx-toastr';

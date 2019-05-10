@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IFolderSelectData } from 'src/app/services/models/others/folder-select-data';
 import { DirectoryService } from 'src/app/services/directory.service';
 import { take } from 'rxjs/operators';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 import { Location } from '@angular/common';
 
 @Component({

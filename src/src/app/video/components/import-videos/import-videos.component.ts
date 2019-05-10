@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { VideoService } from 'src/app/services/video.service';
 import { take } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 import { DirectoryService } from 'src/app/services/directory.service';
 import { IFolderSelectData } from 'src/app/services/models/others/folder-select-data';
 import { Location } from '@angular/common';

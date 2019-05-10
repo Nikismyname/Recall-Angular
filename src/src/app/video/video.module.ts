@@ -23,6 +23,8 @@ import { ImportVideosComponent } from './components/import-videos/import-videos.
 
 import { SharedModule } from '../shared/shared.module';
 
+import {MatTooltipModule} from '@angular/material/tooltip';
+
 const components = [
   CreateVideoComponent,
   NotateVideoComponent,
@@ -57,6 +59,8 @@ const components = [
     VgBufferingModule,
 
     SharedModule,
+
+    MatTooltipModule,
   ],
   providers: [
     {

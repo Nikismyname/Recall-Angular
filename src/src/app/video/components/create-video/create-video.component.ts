@@ -7,7 +7,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { VideoService } from 'src/app/services/video.service';
 import { take } from 'rxjs/operators';
 import { RoutesNoSlash } from '../../../services/route-paths'; 
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 import { ElectronService } from 'ngx-electron';
 
 @Component({

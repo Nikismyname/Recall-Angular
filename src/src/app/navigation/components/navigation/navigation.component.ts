@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { INavIndex } from 'src/app/services/models/navigation/nav-index';

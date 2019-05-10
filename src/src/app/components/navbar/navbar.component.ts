@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RoutePaths } from '../../services/route-paths';
-import { AuthStoreService } from 'src/app/services/DataServices/auth-store.service';
+import { AuthStoreService } from 'src/app/services/data-services/auth-store.service';
 
 @Component({
   selector: 'app-navbar',

@@ -8,7 +8,7 @@ import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { UrlService } from 'src/app/services/url.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IVideoEdit } from 'src/app/services/models/video/video-edit';
-import { VideoNotateStoreServices } from 'src/app/services/DataServices/video-notate-store.services';
+import { VideoNotateStoreServices } from 'src/app/services/data-services/video-notate-store.services';
 import * as c from '../../../utilities/constants';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common';

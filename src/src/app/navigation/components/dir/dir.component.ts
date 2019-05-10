@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angu
 import { IDirChildIndex } from 'src/app/services/models/navigation/dir-child-index';
 import { RoutePaths } from 'src/app/services/route-paths';
 import { ContextMenuComponent } from 'ngx-contextmenu';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 
 @Component({
   selector: 'app-dir',

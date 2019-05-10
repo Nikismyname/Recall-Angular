@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IDirChildIndex } from 'src/app/services/models/navigation/dir-child-index';
 import { IReorderData } from 'src/app/services/models/others/reorder-data';
 import { ReorderService } from 'src/app/services/reorder.service';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 
 @Component({
   selector: 'app-dir-list',

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ExtentionUrlService } from 'src/app/services/extention-url.service';
-import { AuthStoreService } from 'src/app/services/DataServices/auth-store.service';
+import { AuthStoreService } from 'src/app/services/data-services/auth-store.service';
 
 @Component({
   selector: 'app-extention-url',

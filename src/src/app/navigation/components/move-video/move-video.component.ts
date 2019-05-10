@@ -4,7 +4,7 @@ import { IFolderSelectData } from 'src/app/services/models/others/folder-select-
 import { take } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { VideoService } from 'src/app/services/video.service';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 import { Location } from '@angular/common';
 
 @Component({

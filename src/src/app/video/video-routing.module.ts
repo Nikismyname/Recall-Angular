@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CreateVideoComponent } from './components/create-video/create-video.component';
 import { NotateVideoComponent } from './components/notate-video/notate-video.component';
 import { ImportVideosComponent } from './components/import-videos/import-videos.component';
+import { ExtensionVideoImportGuard } from '../services/guards/extension-video-import';
 
 const routes: Routes = [
     {
@@ -16,6 +17,7 @@ const routes: Routes = [
     {
         path: "import",
         component: ImportVideosComponent,
+        canActivate:[ExtensionVideoImportGuard]
     }
 ];
 

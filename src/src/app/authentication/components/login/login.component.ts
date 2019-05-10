@@ -6,10 +6,9 @@ import { Router } from '@angular/router';
 import { ILoginData } from 'src/app/services/models/authentication/login-data';
 import { UserService } from "../../../services/user.service";
 import { take } from "rxjs/operators" 
-import { AuthStoreService } from 'src/app/services/DataServices/auth-store.service';
+import { AuthStoreService } from 'src/app/services/data-services/auth-store.service';
 import { IUser } from 'src/app/services/models/authentication/user';
 import { ToastrService } from 'ngx-toastr';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
 
 @Component({
   selector: 'app-login',

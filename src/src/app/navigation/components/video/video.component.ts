@@ -3,7 +3,7 @@ import { IVideoIndex } from 'src/app/services/models/navigation/video-index';
 import { RoutePaths, RoutesNoSlash } from 'src/app/services/route-paths';
 import { Router } from '@angular/router';
 import { ContextMenuComponent } from 'ngx-contextmenu';
-import { NavStoreService } from 'src/app/services/DataServices/nav-store.service.1';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 
 @Component({
   selector: 'app-video',

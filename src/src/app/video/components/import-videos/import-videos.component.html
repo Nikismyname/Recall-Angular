@@ -16,15 +16,20 @@
 
     <!-- EXTENSION VIDEOS HERE> -->
     <div 
-        class="row mb-2"
+        class="row mb-2 p-0"
         *ngFor="let vid of videosForImport"
     >
-        <div class="col-5" style="background-color: #32383e">
+        <div 
+            [matTooltip]= "vid.name + '\n' + vid.url"
+            matTooltipClass="matTooltipClass"
+            class="col-5" 
+            style="background-color: #32383e; line-height: 2em; height: 4em;"
+        >
+            <div style="color: white;">{{vid.name}}</div>
             <div>{{vid.url}}</div>
-            <div style="color: white; height: 3em;">{{vid.name}}</div>
         </div>
 
-        <div class="col-2">
+        <div class="col-2 pl-2 pr-1">
             <button 
                 [disabled]="btnOneId===null" 
                 (click)="onClickApproveVideo(vid.id, btnOneId)" 
@@ -33,7 +38,7 @@
             >{{btnOneName}}</button>
         </div>
 
-        <div class="col-2">
+        <div class="col-2 pl-1 pr-1">
             <button 
                 [disabled]="btnTwoId===null" 
                 (click)="onClickApproveVideo(vid.id, btnTwoId)" 
@@ -42,7 +47,7 @@
             >{{btnTwoName}}</button>
         </div>
 
-        <div class="col-2">
+        <div class="col-2 pl-1 pr-1">
             <button 
                 (click)="selectingVideoDir(vid.id)"
                 style="height: 100%;"
@@ -50,11 +55,11 @@
             >Select Dir</button>
         </div>
 
-        <div class="col-1">
+        <div class="col-1 pl-1 pr-1">
             <button 
                 (click)="onClickDeleteVideo(vid.id)" 
                 style="height: 100%; color:black"
-                class="btn btn-primary btn-warning"
+                class="btn btn-primary btn-warning btn-block"
             >Del</button>
         </div>
     </div>
