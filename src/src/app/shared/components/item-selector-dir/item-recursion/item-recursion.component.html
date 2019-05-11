@@ -1,0 +1,60 @@
+<div *ngIf="loaded">
+
+    <!--FOLDER>-->
+    <i (click)="onClickFold()"
+    [ngClass]="{'arrow right': isFolded, 'arrow down': !isFolded}"
+    ></i>
+    <input
+        *ngIf="!isSingle"
+        class="ml-2"
+        type="checkbox"
+        [checked]="currentNode.selected"
+        (click)="sheetCheckboxClicked()"
+    />
+    <div style="display: inline-block; cursor: default" 
+      class="pl-2 pr-2"
+      [ngClass]="{'node-selected': isSelected}"
+      (click)="onClickNode(currentNode.id)">
+      {{currentNode.name}}
+    </div>
+    <!--FOLDER^-->
+
+    <!--ITEMS>-->
+    <div *ngIf="!isFolded" class="ml-5">
+      <div 
+        *ngFor="let item of currentNode.items"
+      >
+          <input
+              *ngIf="!isSingle"
+              type="checkbox"
+              (click)="itemCheckboxCicked(item.id)"
+              [checked]="item.selected"
+          />
+          <div 
+            className="global-question pl-2 pr-2 ml-2"
+            style="display: inline-block; color:white"
+            (dblclick)="itemTextDoubleClicked(item.id)"
+            (click)="itemTextClicked(item.id)"
+          >
+              {{item.name}}
+          </div>
+      </div>
+    </div>
+    <!--ITEMS^-->
+
+    <!--CHILD FOLDERS REC>-->
+    <div *ngIf="!isFolded" class="ml-4">
+      <getready-item-recursion 
+        *ngFor="let folder of getChildFolders()" 
+        (selected)="childEmitedSelected($event)"
+        (folded)="childEmitedFolded($event)"
+        (singleItemFinalSelectedEmitter)="childEmitterSingleItemFinal($event)"
+        [currentNode]="folder"
+        [allNotes]="allNotes" 
+        [foldedFolders] = "foldedFolders"
+        [isSingle]="isSingle"
+      ></getready-item-recursion>
+    </div>
+    <!--CHILD FOLDERS REC^-->
+
+  </div>

@@ -24,6 +24,7 @@ import { ImportVideosComponent } from './components/import-videos/import-videos.
 import { SharedModule } from '../shared/shared.module';
 
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { MakeConnectionComponent } from './components/make-connection/make-connection.component';
 
 const components = [
   CreateVideoComponent,
@@ -37,7 +38,7 @@ const components = [
 ]; 
 
 @NgModule({
-  declarations: [...components],
+  declarations: [...components, MakeConnectionComponent],
   imports: [
     CommonModule,
     VideoRoutingModule,

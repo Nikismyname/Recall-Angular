@@ -4,20 +4,29 @@ import { CreateVideoComponent } from './components/create-video/create-video.com
 import { NotateVideoComponent } from './components/notate-video/notate-video.component';
 import { ImportVideosComponent } from './components/import-videos/import-videos.component';
 import { ExtensionVideoImportGuard } from '../services/guards/extension-video-import';
+import { MakeConnectionComponent } from './components/make-connection/make-connection.component'; 
+import { UserGuard } from '../services/guards/user.gourd';
 
 const routes: Routes = [
     {
         path: "create/:id",
         component: CreateVideoComponent,
+        canActivate: [UserGuard]
     },
     {
         path: "note/:id",
         component: NotateVideoComponent,
+        canActivate: [UserGuard]
     },
     {
         path: "import",
         component: ImportVideosComponent,
-        canActivate:[ExtensionVideoImportGuard]
+        canActivate:[ExtensionVideoImportGuard, UserGuard]
+    },
+    {
+        path: "connect/:id", 
+        component: MakeConnectionComponent,
+        canActivate:[UserGuard],
     }
 ];
 

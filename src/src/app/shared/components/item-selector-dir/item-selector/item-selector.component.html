@@ -1,0 +1,17 @@
+<h1> Video Picker </h1>
+<h5 style="color: white;" *ngIf="isSingle" class="mb-4">{{"Double click the wanted video"}}</h5>
+<getready-item-recursion
+  *ngIf="loaded"
+  (selected)="itemsSelected($event)"
+  (folded)="folderFolded($event)"
+  (singleItemFinalSelectedEmitter)="singleItemFinalSelected($event)"
+  [isSingle]="isSingle"
+  [currentNode] ="root"
+  [allNotes] = "folders"
+  [foldedFolders]= "foldedFolders"
+></getready-item-recursion>
+
+<div class="row mt-3">
+  <div class="col-2" *ngIf="!isSingle"><button class="btn btn-primary btn-block">Select</button></div>
+  <div class="col-2"><button class="btn btn-primary btn-block">Back</button></div>
+</div>

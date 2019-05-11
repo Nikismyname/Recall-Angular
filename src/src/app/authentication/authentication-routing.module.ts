@@ -1,17 +1,19 @@
 import { NgModule } from "@angular/core"; 
 import { RouterModule, Routes } from '@angular/router';
-//import { RoutesNoSlash, forFeatureRouting } from '../services/route-paths'; 
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { LoggedOutGuard } from '../services/guards/logged-out.guard';
 
 const routes: Routes = [
     {
         path: "login",
-        component: LoginComponent
+        component: LoginComponent,
+        canActivate: [LoggedOutGuard]
     },
     {
         path: "register",
-        component: RegisterComponent
+        component: RegisterComponent,
+        canActivate: [LoggedOutGuard]
     },
 ]
 

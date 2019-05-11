@@ -3,6 +3,10 @@ import { IDirChildIndex } from 'src/app/services/models/navigation/dir-child-ind
 import { RoutePaths } from 'src/app/services/route-paths';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
+import { DirectoryService } from 'src/app/services/directory.service';
+import { take } from 'rxjs/operators';
+import { IDirectoryEdit } from 'src/app/services/models/directory/directory-edit';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dir',
@@ -18,6 +22,8 @@ export class DirComponent implements OnInit {
   constructor(
     public routePaths: RoutePaths,
     public navService: NavStoreService,
+    private dirService: DirectoryService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
@@ -36,7 +42,18 @@ export class DirComponent implements OnInit {
   }
 
   edit() {
-    
+    let newName = prompt("Choose new name", this.dir.name);
+    if (newName) {
+      let data: IDirectoryEdit = { newName: newName, directoryId: this.dir.id }; 
+      this.dirService.edit(data).pipe(take(1)).subscribe(() => { 
+        this.navService.registerEditedDirectory(data); 
+      },
+        error => { 
+          console.log(error);
+          this.toastr.error("Failed at editing the directory!")
+        }
+      )
+    }
   }
 
 }

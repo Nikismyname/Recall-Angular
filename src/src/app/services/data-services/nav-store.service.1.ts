@@ -12,6 +12,7 @@ import { RoutePaths } from '../route-paths';
 import { IReorderData } from '../models/others/reorder-data';
 import { ElectronService } from 'ngx-electron';
 import { IVideoMoveWithOrigin } from '../models/video/video-move-with-origin';
+import { IDirectoryEdit } from '../models/directory/directory-edit';
 
 @Injectable({
     providedIn: "root"
@@ -93,7 +94,6 @@ export class NavStoreService {
         }
     }
 
-    //sound
     registerCreatedDirectory(dirIndex: IDirChildIndex, parentDirId: number = null) {
         let navId = parentDirId === null ? this._navIndex.getValue().id : parentDirId; 
         let currentNavArray = this.navHistory.filter(x => x.id === navId); 
@@ -102,7 +102,23 @@ export class NavStoreService {
         currentNav.subdirectories = currentNav.subdirectories.concat(dirIndex);
     }
 
-    //sound
+    registerEditedDirectory(data: IDirectoryEdit) { 
+        let currentNavArray = this.navHistory.filter(x => x.id === this._navIndex.getValue().id);
+        if (currentNavArray.length !== 1) {
+            alert("Failed at registering Edited Directory1!");
+            return;
+        }
+
+        let currentNav = currentNavArray[0]; 
+        let directoryArray = currentNav.subdirectories.filter(x => x.id === data.directoryId); 
+        if (directoryArray.length !== 1) {
+            alert("Failed at registering Edited Directory2!");
+            return;
+        }
+        let directory = directoryArray[0]; 
+        directory.name = data.newName;
+    } 
+
     registerCreatedVideo(videoIndex: IVideoIndex, parentDirId: number = null) {
         let navId = parentDirId === null ? this._navIndex.getValue().id : parentDirId; 
         console.log("NAV ID HERE 1: ", navId);
@@ -122,7 +138,6 @@ export class NavStoreService {
         currentNav.videos = currentNav.videos.concat(videoIndex);
     }
 
-    //sound
     registerVideoMove(data: IVideoMoveWithOrigin) {
         if (data === null) {
             alert("registerVideoMove got null") 
@@ -145,7 +160,6 @@ export class NavStoreService {
         newNav.videos = newNav.videos.concat(video);
     }
 
-    //sound
     deleteVideo(id: number) {
         let currentNav = this.navHistory.filter(x => x.id === this._navIndex.getValue().id)[0];
         let videoToDelete = currentNav.videos.filter(x => x.id === id)[0];
@@ -158,7 +172,6 @@ export class NavStoreService {
         }
     }
 
-    //sound
     deleteDirectory(id: number) {
         let currentNav = this.navHistory.filter(x => x.id === this._navIndex.getValue().id)[0];
         let dirToDelete = currentNav.subdirectories.filter(x => x.id === id)[0];
@@ -172,7 +185,6 @@ export class NavStoreService {
         }
     }
 
-    //sound
     reorderDirectories(data: IReorderData) {
         //REORDER DIRECTORIES LOCAL
         let currentNav = this.navHistory.filter(x => x.id === this._navIndex.getValue().id)[0];
@@ -198,7 +210,6 @@ export class NavStoreService {
         //...
     }
 
-    //sound
     reorderVideos(data: IReorderData) {
         //REORDER VIDEOS LOCAL
         let currentNav = this.navHistory.filter(x => x.id === this._navIndex.getValue().id)[0];

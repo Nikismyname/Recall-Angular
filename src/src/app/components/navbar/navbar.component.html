@@ -1,42 +1,43 @@
-<div *ngIf="(authStoreService.user$|async) as user">
-  <div class="bs-component mb-4">
-    <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
-      <div class="container">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
-          aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarColor01">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a [routerLink]="['/']" class="nav-link no-text-selection">Home</a>
-            </li>
+<div class="bs-component mb-4">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
+        aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a [routerLink]="['/']" class="nav-link no-text-selection">Home</a>
+          </li>
 
-            <li className="nav-item">
-              <a [routerLink]="[routePaths.indexPath+'/-1']" class="nav-link no-text-selection">Videos</a>
-            </li>
-            <!-- 
-            <li className="nav-item">
+          <li *ngIf="user.isUser" class="nav-item">
+            <a [routerLink]="[routePaths.indexPath+'/-1']" class="nav-link no-text-selection">Videos</a>
+          </li>
+
+          <!--<li class="nav-item">
               <a [routerLink]="['/tests']" class="nav-link no-text-selection">Teststing Now</a>
             </li> -->
-            <li className="nav-item">
-                <a [routerLink]="[routePaths.videoImportTath]" class="nav-link no-text-selection">Import Videos</a>
-              </li>
-          </ul>
-          <ul class="navbar-nav ml-auto">
-            <li className="nav-item">
-              <a *ngIf="user.isUser" (click)="onClickLogout($event)" href="#" class="nav-link no-text-selection">Logout</a>
-            </li>
-            <li className="nav-item">
-              <a *ngIf="!user.isUser" [routerLink]="[routePaths.loginPath]" class="nav-link no-text-selection">Login</a>
-            </li>
-            <li className="nav-item">
-              <a *ngIf="!user.isUser" [routerLink]="[routePaths.registerPath]"
-                class="nav-link no-text-selection">Register</a>
-            </li>
-          </ul>
-        </div>
+
+          <li *ngIf="user.isUser" class="nav-item">
+            <a [routerLink]="[routePaths.videoImportTath]" class="nav-link no-text-selection">Import Videos</a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav ml-auto">
+          <li *ngIf="user.isUser" class="nav-item">
+            <a (click)="onClickLogout($event)" href="#"
+              class="nav-link no-text-selection">Logout</a>
+          </li>
+          <li *ngIf="!user.isUser" class="nav-item">
+            <a [routerLink]="[routePaths.loginPath]" class="nav-link no-text-selection">Login</a>
+          </li>
+          <li *ngIf="!user.isUser" class="nav-item">
+            <a [routerLink]="[routePaths.registerPath]"
+              class="nav-link no-text-selection">Register</a>
+          </li>
+        </ul>
       </div>
-    </nav>
-  </div>
+    </div>
+  </nav>
 </div>

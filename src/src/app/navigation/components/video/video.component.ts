@@ -40,4 +40,8 @@ export class VideoComponent implements OnInit {
     this.router.navigate([RoutesNoSlash.videoMovePath + "/" + this.video.id]);
   }
 
+  makeConnection() {
+    this.router.navigate([RoutesNoSlash.videoConnectPath+ "/" + this.video.id]);
+  }
+
 }

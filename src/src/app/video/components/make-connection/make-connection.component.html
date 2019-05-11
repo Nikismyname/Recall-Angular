@@ -1,0 +1,72 @@
+<getready-item-selector
+  *ngIf="itemsLoaded && selectingItem"
+  [folders]="allItems"
+  [isSingle]="true"
+  (selectedItemsEmitter)="itemSelected($event)"
+></getready-item-selector>
+
+<form *ngIf="!selectingItem" [formGroup]="form" (submit)="onSubmit($event)">
+  <div class="row" >
+
+    <!-- NAME> -->
+    <label class="col-2 col-form-label text-right">Name</label>
+    <div class="col-8">
+      <input 
+        formControlName="name"
+        class="form-control-black mb-4" 
+        type="text" 
+      />
+    </div>
+    <div class="col-2"></div>
+
+    <ng-template [ngIf]="c['name']?.hasError('required') && c['name']?.touched">
+        <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
+        The Strength value is required!
+      </div><div class="col-2"></div>
+    </ng-template>
+    <!-- NAME^ -->
+
+    <!-- STRENGTH> -->
+    <label class="col-2 col-form-label text-right">Strength</label>
+    <div class="col-8">
+      <input 
+        formControlName="strength"
+        class="form-control-black mb-4" 
+        type="number" 
+      />
+    </div>
+    <div class="col-2"></div>
+
+    <ng-template [ngIf]="c['strength']?.hasError('outOfRangeStrengthValue') && c['strength']?.touched"> 
+      <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
+        The Strength value must be between 1 and 10!
+      </div><div class="col-2"></div>
+    </ng-template>
+
+    <ng-template [ngIf]="c['strength']?.hasError('required') && c['strength']?.touched">
+      <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
+        The Strength value is required!
+      </div><div class="col-2"></div>
+    </ng-template>
+    <!-- STRENGTH^ -->
+
+    <!-- TYPE> -->
+    <label class="col-2 col-form-label text-right">Type</label>
+    <div class="col-8"> 
+      <select class="form-control-black mb-4" formControlName="type">
+        <option *ngFor="let key of connectionTypeKeys" [value]="key" [label]="ConnectionType[key]">hehe</option>
+      </select>
+    </div>
+    <div class="col-2"></div>
+
+    <ng-template [ngIf]="c['type']?.hasError('required') && c['type']?.touched">
+        <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
+          The Type value is required!
+        </div><div class="col-2"></div>
+    </ng-template>
+    <!-- TYPE^ -->
+
+    <button [disabled]="!form.valid" type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>
+
