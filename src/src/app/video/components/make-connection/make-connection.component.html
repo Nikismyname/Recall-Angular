@@ -1,15 +1,97 @@
-<getready-item-selector
-  *ngIf="itemsLoaded && selectingItem"
-  [folders]="allItems"
-  [isSingle]="true"
-  (selectedItemsEmitter)="itemSelected($event)"
-></getready-item-selector>
+<!-- MAIN DISPLAY> -->
+<ng-template [ngIf]="currentDisplay === CurrentDisplay.mainDisplay">
+  <ng-template [ngIf]="videoLoaded">
+    <div class="row">
+      <div class="col-3">
+        <div class="card" style="border: 1px solid rgba(3, 91, 255, 0.6)">
+          <div class="card-body">
+            <h6 class="card-title">{{video.name}}</h6>
+            <h6 class="card-title">Notes: {{video.noteCount}}</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-3" *ngFor="let topic of video.topics">
+        <div class="card" style="border: 1px solid rgba(3, 91, 255, 0.6)">
+          <div class="card-body">
+            <h6 class="card-title">{{topic.name}}</h6>
+            <h6 class="card-title">{{topic.description}}</h6>
+            <h6 class="card-title">{{topic.criteriaForBelonging}}</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
 
-<form *ngIf="!selectingItem" [formGroup]="form" (submit)="onSubmit($event)">
+  <h1 class="text-center">Main Display</h1>
+  <button 
+    class="btn btn-primary"
+    (click)="currentDisplay = CurrentDisplay.creatingNewTopic"
+  >Create Topic</button>
+
+  <button 
+    class="btn btn-primary"
+    (click)="currentDisplay = CurrentDisplay.creatingVideoConnection"
+  >Create Video Connection</button>
+
+  <button (click)="currentDisplay = CurrentDisplay.selectingTopic" class="btn btn-primary">Select Topic</button>
+  
+</ng-template>
+<!-- MAIN DISPLAY> -->
+
+<!-- SELECTING VIDEO> -->
+<ng-template [ngIf]="currentDisplay === CurrentDisplay.selectingVideo">
+  <h1 class="text-center">Select Video</h1>
+  <getready-item-selector
+    [folders]="allVideoItems"
+    [isSingle]="true"
+    (selectedItemsEmitter)="itemSelected($event)"
+  ></getready-item-selector>
+</ng-template>
+<!-- SELECTING VIDEO^ -->
+
+<!-- SELECTING TOPIC > -->
+<ng-template [ngIf]="currentDisplay === CurrentDisplay.selectingTopic">
+<h1 class="text-center">Select Topic</h1>
+<getready-folder-selector
+
+></getready-folder-selector> 
+</ng-template>
+<!-- SELECTING TOPIC ^ -->
+
+<!-- CREATING VIDEO CONNECTION> -->
+<ng-template [ngIf]="currentDisplay === CurrentDisplay.creatingVideoConnection">
+<h1 class="text-center">Video Connection Form</h1>
+<form 
+  [formGroup]="videoToVideoConnectionForm" 
+  (submit)="onSubmitVideoToVideoConnection($event)"
+>
   <div class="row" >
 
+    <!-- TYPE> -->
+    <label class="col-2 col-form-label text-right">Type</label>
+    <div class="col-8"> 
+      <select class="form-control-black mb-4" formControlName="type">
+        <option 
+          #option
+          *ngFor="let key of connectionTypeKeys"
+          [value]="key" 
+          [label]="fixEnumName(ConnectionType[key])"
+        ></option>
+      </select>
+    </div>
+    <div class="col-2"></div>
+
+    <ng-template [ngIf]="vc['type']?.hasError('required') && vc['type']?.touched">
+        <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
+          The Type value is required!
+        </div><div class="col-2"></div>
+    </ng-template>
+    <!-- TYPE^ -->
+
     <!-- NAME> -->
-    <label class="col-2 col-form-label text-right">Name</label>
+    <label class="col-2 col-form-label text-right">{{getNamelabel()}}</label>
     <div class="col-8">
       <input 
         formControlName="name"
@@ -19,7 +101,7 @@
     </div>
     <div class="col-2"></div>
 
-    <ng-template [ngIf]="c['name']?.hasError('required') && c['name']?.touched">
+    <ng-template [ngIf]="vc['name']?.hasError('required') && vc['name']?.touched">
         <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
         The Strength value is required!
       </div><div class="col-2"></div>
@@ -37,36 +119,67 @@
     </div>
     <div class="col-2"></div>
 
-    <ng-template [ngIf]="c['strength']?.hasError('outOfRangeStrengthValue') && c['strength']?.touched"> 
+    <ng-template [ngIf]="vc['strength']?.hasError('outOfRangeStrengthValue') && vc['strength']?.touched"> 
       <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
         The Strength value must be between 1 and 10!
       </div><div class="col-2"></div>
     </ng-template>
 
-    <ng-template [ngIf]="c['strength']?.hasError('required') && c['strength']?.touched">
+    <ng-template [ngIf]="vc['strength']?.hasError('required') && vc['strength']?.touched">
       <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
         The Strength value is required!
       </div><div class="col-2"></div>
     </ng-template>
     <!-- STRENGTH^ -->
 
-    <!-- TYPE> -->
-    <label class="col-2 col-form-label text-right">Type</label>
-    <div class="col-8"> 
-      <select class="form-control-black mb-4" formControlName="type">
-        <option *ngFor="let key of connectionTypeKeys" [value]="key" [label]="ConnectionType[key]">hehe</option>
-      </select>
-    </div>
-    <div class="col-2"></div>
-
-    <ng-template [ngIf]="c['type']?.hasError('required') && c['type']?.touched">
-        <div class="col-2"></div><div class="Min-Error-Handling alert alert-warning col-8">
-          The Type value is required!
-        </div><div class="col-2"></div>
-    </ng-template>
-    <!-- TYPE^ -->
-
-    <button [disabled]="!form.valid" type="submit" class="btn btn-primary">Submit</button>
+    <button [disabled]="!videoToVideoConnectionForm.valid" type="submit" class="btn btn-primary">Submit</button>
   </div>
 </form>
+</ng-template>
+<!-- CREATING VIDEO CONNECTION^ -->
 
+<!-- CREATING NEW TOPIC> -->
+<ng-template [ngIf]="currentDisplay === CurrentDisplay.creatingNewTopic">
+  <h1 class="text-center">Create Topic Form</h1>
+  <form 
+    [formGroup]="createTopicForm" 
+    (submit)="onSubmitCreateTopic($event)"
+  >
+    <div class="row" >
+      <label class="col-2 col-form-label text-right">Name</label>
+      <div class="col-8">
+        <input 
+          formControlName="name"
+          class="form-control-black mb-4" 
+          type="text" 
+        />
+      </div>
+      <div class="col-2"></div>
+
+      <label class="col-2 col-form-label text-right">Description</label>
+      <div class="col-8">
+          <textarea 
+            autosize
+            formControlName="description"
+            [minRows]="1"
+            class="form-control-black mb-4" 
+          ></textarea>
+      </div>
+      <div class="col-2"></div>
+
+      <label class="col-2 col-form-label text-right">Criteria For Belonging</label>
+      <div class="col-8">
+        <textarea 
+          autosize
+          formControlName="criteriaForBelonging"
+          [minRows]="1"
+          class="form-control-black mb-4" 
+        ></textarea>
+      </div>
+      <div class="col-2"></div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+  <button (click)="currentDisplay = CurrentDisplay.selectingTopic" type="button" class="btn-primary btn">Select Parent</button>
+</ng-template>
+<!-- CREATING NEW TOPIC> -->

@@ -26,6 +26,8 @@ import { SharedModule } from '../shared/shared.module';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { MakeConnectionComponent } from './components/make-connection/make-connection.component';
 
+import { AutosizeModule } from 'ngx-autosize';
+
 const components = [
   CreateVideoComponent,
   NotateVideoComponent,
@@ -62,6 +64,8 @@ const components = [
     SharedModule,
 
     MatTooltipModule,
+
+    AutosizeModule,
   ],
   providers: [
     {

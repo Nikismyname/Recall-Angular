@@ -6,6 +6,8 @@ import { take } from 'rxjs/operators';
 import { VideoService } from './services/video.service';
 import { ToastrService } from 'ngx-toastr';
 import { IUser } from './services/models/authentication/user';
+import { Router } from '@angular/router';
+import { RoutesNoSlash } from './services/route-paths'; 
 
 @Component({
   selector: 'app-root',
@@ -21,6 +23,7 @@ export class AppComponent {
     private navService: NavStoreService,
     private videoService: VideoService,
     private toastr: ToastrService,
+    private router: Router,
   ) {
     if (this.electronService.isElectronApp) {
       electronService.webFrame.setZoomFactor(1.75);
@@ -33,12 +36,17 @@ export class AppComponent {
 
     window.addEventListener("message", event => {
       if (event.source != window || event["data"]["message"] !== "recallCreate") { return; }
-      this.createExternalVideo(event["data"]["directory"], event["data"]["name"], event["data"]["url"])
+      this.createExternalVideo(
+        event["data"]["directory"],
+        event["data"]["name"],
+        event["data"]["url"],
+        event["data"]["shouldOpen"], 
+      )
     }, false);
   }
 
   //directory can be "root", "current", "chooseLater"
-  createExternalVideo(directory: string, name: string, url: string) {
+  createExternalVideo(directory: string, name: string, url: string, shouldOpen: boolean) {
     url = decodeURIComponent(url);
     console.log("Event Items Here: ", directory, name, url);
 
@@ -81,6 +89,9 @@ export class AppComponent {
         isLocal: false
       }).pipe(take(1)).subscribe(videoNav => {
         this.navService.registerCreatedVideo(videoNav);
+        if (shouldOpen) {
+          this.router.navigate([RoutesNoSlash.videoNotePath+ "/" + videoNav.id]);
+        }
       });
     } else if (root) {
       let videoName = name;
@@ -97,6 +108,9 @@ export class AppComponent {
         isLocal: false
       }).pipe(take(1)).subscribe(videoNav => {
         this.navService.registerCreatedVideo(videoNav, -1);
+        if (shouldOpen) {
+          this.router.navigate([RoutesNoSlash.videoNotePath+ "/" + videoNav.id]);
+        }
       });
     }
   }

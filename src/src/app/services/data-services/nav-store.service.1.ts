@@ -1,3 +1,4 @@
+/* #region  INIT */
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { INavIndex } from '../models/navigation/nav-index';
@@ -18,10 +19,6 @@ import { IDirectoryEdit } from '../models/directory/directory-edit';
     providedIn: "root"
 })
 export class NavStoreService {
-
-    rootId: number = null;
-    electronFromBuild: boolean;
-
     constructor(
         private navigationService: NavigationService,
         private videoService: VideoService,
@@ -39,28 +36,18 @@ export class NavStoreService {
         }
     }
 
+    rootId: number = null;
+
+    electronFromBuild: boolean;
+
     private readonly _navIndex = new BehaviorSubject<INavIndex>(null);
 
     readonly navIndex$ = this._navIndex.asObservable();
 
     private navHistory: INavIndex[];
+    /* #endregion */
 
-    setRootId(id: number) {
-        this.rootId = id;
-    }
-
-    getRootId(): number { 
-        return this.rootId;
-    }
-
-    getCurrentId(): number { 
-        if (this._navIndex.getValue() === null) { 
-            return null;
-        } else {
-            return this._navIndex.getValue().id;
-        }
-    }
-
+    /* #region  SET_NAV */
     setNav(id: number) {
 
         if (this.rootId && id === -1) {
@@ -78,7 +65,7 @@ export class NavStoreService {
                 nav => {
                     nav.subdirectories = nav.subdirectories.sort((a, b) => a.order - b.order);
                     nav.videos = nav.videos.sort((a, b) => a.order - b.order);
-                    
+
                     this.navHistory = this.navHistory.concat(nav);
                     this._navIndex.next(nav);
 
@@ -93,46 +80,48 @@ export class NavStoreService {
             this._navIndex.next(existingNav[0]);
         }
     }
+    /* #endregion */
 
+    /* #region  REGISTER_CHANGES */
     registerCreatedDirectory(dirIndex: IDirChildIndex, parentDirId: number = null) {
-        let navId = parentDirId === null ? this._navIndex.getValue().id : parentDirId; 
-        let currentNavArray = this.navHistory.filter(x => x.id === navId); 
+        let navId = parentDirId === null ? this._navIndex.getValue().id : parentDirId;
+        let currentNavArray = this.navHistory.filter(x => x.id === navId);
         if (currentNavArray.length !== 1) { return; } //nav is not in memory, so it will be loaded from db
         let currentNav = currentNavArray[0];
         currentNav.subdirectories = currentNav.subdirectories.concat(dirIndex);
     }
 
-    registerEditedDirectory(data: IDirectoryEdit) { 
+    registerEditedDirectory(data: IDirectoryEdit) {
         let currentNavArray = this.navHistory.filter(x => x.id === this._navIndex.getValue().id);
         if (currentNavArray.length !== 1) {
             alert("Failed at registering Edited Directory1!");
             return;
         }
 
-        let currentNav = currentNavArray[0]; 
-        let directoryArray = currentNav.subdirectories.filter(x => x.id === data.directoryId); 
+        let currentNav = currentNavArray[0];
+        let directoryArray = currentNav.subdirectories.filter(x => x.id === data.directoryId);
         if (directoryArray.length !== 1) {
             alert("Failed at registering Edited Directory2!");
             return;
         }
-        let directory = directoryArray[0]; 
+        let directory = directoryArray[0];
         directory.name = data.newName;
-    } 
+    }
 
     registerCreatedVideo(videoIndex: IVideoIndex, parentDirId: number = null) {
-        let navId = parentDirId === null ? this._navIndex.getValue().id : parentDirId; 
+        let navId = parentDirId === null ? this._navIndex.getValue().id : parentDirId;
         console.log("NAV ID HERE 1: ", navId);
         console.log("COMP", navId, -1, navId === -1);
         if (navId === -1) {
-            console.log("ROOT ID", );
-            if (this.rootId !== null) { 
+            console.log("ROOT ID");
+            if (this.rootId !== null) {
                 navId = this.rootId;
                 console.log("NAV ID HERE 2: ", navId);
             } else {
                 return;
             }
         }
-        let currentNavArray = this.navHistory.filter(x => x.id === navId); 
+        let currentNavArray = this.navHistory.filter(x => x.id === navId);
         if (currentNavArray.length !== 1) { return; } //nav is not in memory, so it will be loaded from db
         let currentNav = currentNavArray[0];
         currentNav.videos = currentNav.videos.concat(videoIndex);
@@ -140,7 +129,7 @@ export class NavStoreService {
 
     registerVideoMove(data: IVideoMoveWithOrigin) {
         if (data === null) {
-            alert("registerVideoMove got null") 
+            alert("registerVideoMove got null")
             return;
         }
 
@@ -155,11 +144,13 @@ export class NavStoreService {
 
         let newNavArray = this.navHistory.filter(x => x.id == data.newDirectoryId);
         if (newNavArray.length !== 1) { return; }
-        let newNav = newNavArray[0]; 
+        let newNav = newNavArray[0];
         //TODO; make the video order last;
         newNav.videos = newNav.videos.concat(video);
     }
+    /* #endregion */
 
+    /* #region  DELETE */
     deleteVideo(id: number) {
         let currentNav = this.navHistory.filter(x => x.id === this._navIndex.getValue().id)[0];
         let videoToDelete = currentNav.videos.filter(x => x.id === id)[0];
@@ -184,7 +175,9 @@ export class NavStoreService {
             );
         }
     }
+    /* #endregion */
 
+    /* #region  REORDER */
     reorderDirectories(data: IReorderData) {
         //REORDER DIRECTORIES LOCAL
         let currentNav = this.navHistory.filter(x => x.id === this._navIndex.getValue().id)[0];
@@ -235,7 +228,9 @@ export class NavStoreService {
         );
         //...
     }
+    /* #endregion */
 
+    /* #region  HELPERS */
     updateUrl(id: number) {
         if (this.electronService.isElectronApp && this.electronFromBuild) {
             let appPath = this.electronService.remote.app.getAppPath() + "/dist/recall";
@@ -245,4 +240,23 @@ export class NavStoreService {
             window.history.pushState(null, null, this.routePaths.indexPath + "/" + id);
         }
     }
+    /* #endregion */
+
+    /* #region  SETTERS_GETTERS */
+    setRootId(id: number) {
+        this.rootId = id;
+    }
+
+    getRootId(): number {
+        return this.rootId;
+    }
+
+    getCurrentId(): number {
+        if (this._navIndex.getValue() === null) {
+            return null;
+        } else {
+            return this._navIndex.getValue().id;
+        }
+    }
+    /* #endregion */
 }

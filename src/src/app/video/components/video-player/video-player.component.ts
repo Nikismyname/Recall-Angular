@@ -38,9 +38,9 @@ export class VideoPlayerComponent {
   ) { }
 
   setUpYouTube(token: string) {
-    if (this.youTubeSetUp) { 
+    if (this.youTubeSetUp) {
       this.youTubePlayer.loadVideoById(token);
-      this.youTubePlayer.seekTo(this.initialSeekToTime, true); 
+      this.youTubePlayer.seekTo(this.initialSeekToTime, true);
       this.newYouTubeVid = true;
       return;
     }
@@ -123,6 +123,17 @@ export class VideoPlayerComponent {
     }
   }
 
+  getDuration() {
+    switch (this.type) {
+      case VideoType.youTube:
+        return Math.trunc(this.youTubePlayer.getDuration());
+      case VideoType.local:
+        return Math.trunc(this.localPlayer.getDefaultMedia().duration);
+      case VideoType.vimeo:
+        return 42;
+    }
+  }
+
   public saveYouTubePlayer(player: YT.Player) {
     this.youTubePlayer = player;
     this.youTubePlayer.seekTo(this.initialSeekToTime, true);
@@ -132,8 +143,11 @@ export class VideoPlayerComponent {
 
   public saveLocalPlayer(player: VgAPI) {
     this.localPlayer = player;
-    this.videoInitialDoneEmitter.emit();
     this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;
+    this.localPlayer.getDefaultMedia().subscriptions.loadedMetadata.subscribe(
+      () => {
+        this.videoInitialDoneEmitter.emit();
+    });
   }
 
   counter: number = 0;
@@ -148,7 +162,7 @@ export class VideoPlayerComponent {
       }
     }
 
-    if (this.newYouTubeVid && e.data === -1) { 
+    if (this.newYouTubeVid && e.data === -1) {
       this.counter++;
       if (this.counter === 2) {
         this.counter = 0;
@@ -159,21 +173,21 @@ export class VideoPlayerComponent {
     }
   }
 
-  localPaused() { 
+  localPaused() {
     this.isPlayingEmitter.emit(false);
   }
 
-  localPlayed() { 
-    if (this.newLocalVid) { 
+  localPlayed() {
+    if (this.newLocalVid) {
       this.localPlayer.getDefaultMedia().currentTime = this.initialSeekToTime;
       this.newLocalVid = false;
       this.localPlayer.pause();
       return;
     }
 
-    if (this.isFirstPlayLocal) { 
+    if (this.isFirstPlayLocal) {
       this.localPlayer.pause();
-      this.isFirstPlayLocal = false; 
+      this.isFirstPlayLocal = false;
       return;
     }
 

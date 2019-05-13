@@ -40,6 +40,7 @@ export class VideoNotateStoreServices {
             name: curr.name === prev.name ? null : curr.name,
             description: curr.description === prev.description ? null : curr.description,
             url: curr.url === prev.url ? null : curr.url,
+            duration: curr.duration === prev.duration ? null : curr.duration,
             newItems: this.generateNewNotes(curr),
             changes: this.generateChanges(curr, prev),
             finalSave: true,
@@ -50,6 +51,7 @@ export class VideoNotateStoreServices {
             saveData.name === null &&
             saveData.description === null &&
             saveData.url === null &&
+            saveData.duration === null && 
             saveData.newItems.length === 0 &&
             saveData.changes.length === 0
         ) {

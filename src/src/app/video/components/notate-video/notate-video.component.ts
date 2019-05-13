@@ -198,11 +198,13 @@ export class NotateVideoComponent implements OnInit {
   }
 
   save() {
-    let playerSeekTo = this.player.getCurrentTime()
+    let playerSeekTo = this.player.getCurrentTime();
     let seekDiference = this.video.seekTo - playerSeekTo;
     if (Math.abs(seekDiference) > 2) {
       this.video.seekTo = playerSeekTo;
     }
+
+    this.video.duration = this.player.getDuration();
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -226,6 +228,43 @@ export class NotateVideoComponent implements OnInit {
     }
   }
 
+  autoSave() {
+    let playerSeekTo = this.player.getCurrentTime()
+    let seekDiference = this.video.seekTo - playerSeekTo;
+    if (Math.abs(seekDiference) > 2) {
+      this.video.seekTo = playerSeekTo;
+    }
+
+    this.video.duration = this.player.getDuration();
+
+    let result = this.notateService.save(this.video);
+    if (result === null) {
+      console.log("No Changes");
+      //this.toastr.info("No Changes To Save!", "Info");
+    } else {
+      result
+        .pipe(take(1))
+        .subscribe(
+          newIds => {
+            //this.toastr.success("Partial Save Success", "Success");
+            for (let i = 0; i < newIds.length; i++) {
+              let newId = newIds[i];
+              let ipId = newId[0];
+              let dbId = newId[1];
+
+              let note = this.video.notes.filter(x => x.inPageId === ipId)[0];
+              note.id = dbId;
+            }
+
+            this.notateService.setIdsToPrevious(newIds); 
+          },
+          error => {
+            this.toastr.error("Partial Save Failed!", "Error");
+          },
+        );
+    }
+  }
+
   onFileSelected(e) {// for video player
     let file = e.target.files[0];
     if (file) {
@@ -240,7 +279,10 @@ export class NotateVideoComponent implements OnInit {
   }
 
   back() {
-    this.location.back();
+    let youShure = window.confirm("Are you sure? Changes will not be saved!");
+    if (youShure) {
+      this.location.back();
+    }
   }
 
   pausePlay() {
@@ -258,6 +300,7 @@ export class NotateVideoComponent implements OnInit {
   videoInitialLoad() {
     setTimeout(() => {
       this.videoInitiaLoadDone = true;
+      console.log("duration here",this.player.getDuration());
     }, 1);
   }
 
@@ -300,43 +343,6 @@ export class NotateVideoComponent implements OnInit {
         this.autoSave();
       }
     }, 1000)
-  }
-
-  autoSave() {
-    let playerSeekTo = this.player.getCurrentTime()
-    let seekDiference = this.video.seekTo - playerSeekTo;
-    if (Math.abs(seekDiference) > 2) {
-      this.video.seekTo = playerSeekTo;
-    }
-
-    let result = this.notateService.save(this.video);
-    if (result === null) {
-      console.log("No Changes");
-      this.toastr.info("No Changes To Save!", "Info");
-    } else {
-      result
-        .pipe(take(1))
-        .subscribe(
-          newIds => {
-            //console.log("Partial Save Success ", newIds);
-            this.toastr.success("Partial Save Success", "Success");
-            for (let i = 0; i < newIds.length; i++) {
-              let newId = newIds[i];
-              let ipId = newId[0];
-              let dbId = newId[1];
-
-              let note = this.video.notes.filter(x => x.inPageId === ipId)[0];
-              note.id = dbId;
-            }
-
-            this.notateService.setIdsToPrevious(newIds); 
-          },
-          error => {
-            //console.log("Partial Save Error ", error);
-            this.toastr.error("Partial Save Failed!", "Error");
-          },
-        );
-    }
   }
 
   ngOnDestroy() {

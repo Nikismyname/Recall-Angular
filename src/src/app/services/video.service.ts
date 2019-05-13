@@ -9,6 +9,7 @@ import { IVideoMoveWithOrigin } from './models/video/video-move-with-origin';
 import { IExtensionAddData } from './models/video/extension-add-data';
 import { IConvertExtensionData } from './models/video/convert-extension-data';
 import { IExtensionAddDataWithId } from './models/video/extension-add-data-with-id';
+import { IVideoForConnections } from './models/video/video-for-connections';
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +26,10 @@ export class VideoService {
 
     getForEdit = (id: number) => { 
         return this.http.post<IVideoEdit>("Video/GetForEdit", JSON.stringify(id)); 
+    }
+
+    getForConnections = (id: number) => { 
+        return this.http.post<IVideoForConnections>("Video/GetForConnections", JSON.stringify(id)); 
     }
 
     save = (data: IVideoSave) => { 

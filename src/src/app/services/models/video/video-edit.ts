@@ -10,5 +10,6 @@ export interface IVideoEdit {
     isYouTube: boolean,
     isVimeo: boolean,
     isLocal: boolean,
+    duration: number,
     notes: INoteInternal[],
 }
