@@ -1,9 +1,10 @@
 <!-- MAIN DISPLAY> -->
 <ng-template [ngIf]="currentDisplay === CurrentDisplay.mainDisplay">
+  <h1 class="text-center">Main Display</h1>
   <ng-template [ngIf]="videoLoaded">
     <div class="row">
       <div class="col-3">
-        <div class="card" style="border: 1px solid rgba(3, 91, 255, 0.6)">
+        <div class="card mb-4" style="border: 1px solid rgba(3, 91, 255, 0.6)">
           <div class="card-body">
             <h6 class="card-title">{{video.name}}</h6>
             <h6 class="card-title">Notes: {{video.noteCount}}</h6>
@@ -11,31 +12,33 @@
         </div>
       </div>
     </div>
+    <h4 *ngIf="video.topics.length > 0">Topics:</h4>
     <div class="row">
       <div class="col-3" *ngFor="let topic of video.topics">
-        <div class="card" style="border: 1px solid rgba(3, 91, 255, 0.6)">
-          <div class="card-body">
-            <h6 class="card-title">{{topic.name}}</h6>
-            <h6 class="card-title">{{topic.description}}</h6>
-            <h6 class="card-title">{{topic.criteriaForBelonging}}</h6>
-          </div>
-        </div>
+        <app-attached-topic 
+          [topic]="topic" 
+        ></app-attached-topic>
       </div>
     </div>
   </ng-template>
 
-  <h1 class="text-center">Main Display</h1>
   <button 
     class="btn btn-primary"
-    (click)="currentDisplay = CurrentDisplay.creatingNewTopic"
+    (click)="switchDisplay(CurrentDisplay.creatingNewTopic)"
   >Create Topic</button>
 
   <button 
     class="btn btn-primary"
-    (click)="currentDisplay = CurrentDisplay.creatingVideoConnection"
+    (click)="switchDisplay(CurrentDisplay.creatingVideoConnection)"
   >Create Video Connection</button>
 
-  <button (click)="currentDisplay = CurrentDisplay.selectingTopic" class="btn btn-primary">Select Topic</button>
+  <button 
+    (click)="switchDisplay(CurrentDisplay.selectingTopic)" class="btn btn-primary"
+  >Select Topic</button>
+
+  <button 
+    (click)="switchDisplay(CurrentDisplay.selectingTopic)" class="btn btn-primary"
+  >Add Topic To Video</button>
   
 </ng-template>
 <!-- MAIN DISPLAY> -->
@@ -46,17 +49,22 @@
   <getready-item-selector
     [folders]="allVideoItems"
     [isSingle]="true"
-    (selectedItemsEmitter)="itemSelected($event)"
+    (selectedItemsEmitter)="videoSelected($event)"
   ></getready-item-selector>
 </ng-template>
 <!-- SELECTING VIDEO^ -->
 
 <!-- SELECTING TOPIC > -->
-<ng-template [ngIf]="currentDisplay === CurrentDisplay.selectingTopic">
-<h1 class="text-center">Select Topic</h1>
-<getready-folder-selector
-
-></getready-folder-selector> 
+<ng-template [ngIf]="currentDisplay === CurrentDisplay.selectingTopic && topicsLoaded">
+  <h1 class="text-center">Select Topic</h1>
+  <getready-folder-selector
+    [folders]="allTopics"
+    [parentHandlesBack]="true"
+    [title]="'Select Parent Topic'"
+    [type]="'folder'"
+    (backEmitter)="backFromFolderSelector()"
+    (folderSelectedEmitter)="topicSelected($event)"
+  ></getready-folder-selector> 
 </ng-template>
 <!-- SELECTING TOPIC ^ -->
 
@@ -178,8 +186,13 @@
       </div>
       <div class="col-2"></div>
       <button type="submit" class="btn btn-primary">Submit</button>
+      <button 
+        (click)="switchDisplay(CurrentDisplay.selectingTopic)" 
+        type="button" 
+        class="btn-primary btn"
+      >Select Parent</button>
     </div>
   </form>
-  <button (click)="currentDisplay = CurrentDisplay.selectingTopic" type="button" class="btn-primary btn">Select Parent</button>
+
 </ng-template>
 <!-- CREATING NEW TOPIC> -->

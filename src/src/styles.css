@@ -34,6 +34,8 @@
 
 .matTooltipClass{
     white-space: pre-line;
+    background-color: #272b30 !important;
     max-width: 95vw !important; 
-    width: 95vw !important; 
+    text-align: left !important;
+    left: 2.5vw !important;
 }

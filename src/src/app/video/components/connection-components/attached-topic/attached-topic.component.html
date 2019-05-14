@@ -1,0 +1,28 @@
+<ng-template [ngIf]="topic">
+  <div 
+    class="card mb-4" 
+    style="border: 1px solid rgba(44, 212, 114, 0.6)"
+    [tooltip]="topic.description + '\n' + topic.criteriaForBelonging" 
+    tooltip-class="matTooltipClass"
+    placement="bottom"
+    hide-delay="0"
+  >
+    <div class="card-body">
+      <h6 class="card-title">{{topic.name}}</h6>
+    </div>
+  </div>
+</ng-template>
+
+<context-menu>
+  <ng-template contextMenuItem (execute)="removeFromVideo()">
+    Romove From Video
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="changeAdherence()">
+    Change Adherence
+  </ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="showOtherVideosOnTopic()">
+    Show Other Videos on Topic
+  </ng-template>
+</context-menu>

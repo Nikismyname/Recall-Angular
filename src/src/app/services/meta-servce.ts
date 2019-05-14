@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ITopicCreate } from './models/meta/topic-create';
 import { ITopicFolder } from './models/meta/topic-folder';
 import { IAddVideoData } from './models/meta/add-video-data';
+import { IRemoveVideoFromTopicData } from './models/meta/remove-video-from-topic-data';
 
 @Injectable({
     providedIn: 'root'
@@ -17,12 +18,16 @@ export class MetaService {
         return this.http.post<ITopicFolder>("Meta/CreateTopic", JSON.stringify(data));
     }
 
-    addVideo = (data: IAddVideoData) => { 
+    addVideoToTopic = (data: IAddVideoData) => { 
         return this.http.post<void>("Meta/AddVideoToTopic", JSON.stringify(data));
     } 
 
-    getAllForSelect = (all: boolean) => {
-        return this.http.post<ITopicFolder[]>("Meta/GetAllTopicsForSelect", JSON.stringify(all));
+    removeVideoFromTopic = (data: IRemoveVideoFromTopicData) => { 
+        return this.http.post<void>("Meta/RemoveVideoFromTopic", JSON.stringify(data));
+    } 
+
+    getAllTpicsForSelect = (all: boolean) => {
+        return this.http.get<ITopicFolder[]>("Meta/GetAllTopicsForSelect/"+ all);
     }
 
     getAllTopicsForVideo = (videoId: number) => {

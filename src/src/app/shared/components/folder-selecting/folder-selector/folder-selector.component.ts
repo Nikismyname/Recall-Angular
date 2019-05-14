@@ -22,13 +22,16 @@ export class FolderSelectorComponent {
   @Input("folders") set foldersSetter(incFolders: IFolderSelectData[]) {
     this.folders = incFolders;
     if (this.folders.length > 0) {
-      this.root = this.folders.filter(x => x.parentId === null)[0];
+      this.roots = this.folders.filter(x => x.parentId === null);
       this.loaded = true;
     } else {
       this.loaded = false;
     }
   };
   @Input() parentHandlesBack: boolean = false;
+  @Input() title: string = "Pick Folder";
+  @Input() type: string = "folder"; 
+
   @Output() folderSelectedEmitter: EventEmitter<number> = new EventEmitter();
   @Output() folderCreatedRefresh: EventEmitter<void> = new EventEmitter();
   @Output() backEmitter: EventEmitter<void> = new EventEmitter();
@@ -36,7 +39,7 @@ export class FolderSelectorComponent {
   areCreatingFolder: boolean = false;
 
   loaded: boolean = false;
-  root: IFolderSelectData;
+  roots: IFolderSelectData[];
   selectedId: number = null;
   foldedFolders: number[] = [];
 
@@ -83,6 +86,12 @@ export class FolderSelectorComponent {
       this.location.back();
     } else {
       this.backEmitter.emit();
+    }
+  }
+
+  onClickRoot() {
+    if (this.type === "topic") {
+      this.folderSelectedEmitter.emit(null);
     }
   }
 

@@ -1,13 +1,20 @@
-<h1> Folder Picker </h1>
-<getready-folder-recursion
-  *ngIf="loaded"
-  (selected)="folderSelected($event)"
-  (folded)="folderFolded($event)"
-  [currentNode] ="root"
-  [allNotes] = "folders"
-  [selectedId] = "selectedId"
-  [foldedFolders]= "foldedFolders"
-></getready-folder-recursion>
+<h1> {{title}} </h1>
+<ng-template [ngIf]="type==='topic'">
+<h6 (dblclick)="onClickRoot()" >Root</h6>
+</ng-template>
+
+<ng-template [ngIf]="loaded">
+  <getready-folder-recursion
+    *ngFor="let root of roots"
+    (selected)="folderSelected($event)"
+    (folded)="folderFolded($event)"
+    [currentNode] ="root"
+    [allNotes] = "folders"
+    [selectedId] = "selectedId"
+    [foldedFolders]= "foldedFolders"
+  ></getready-folder-recursion>
+</ng-template>
+
 <div class="row mt-4">
   <div class="col-2">
     <button class="btn btn-primary btn-block" (click)="folderFinalChosen()">Select</button>

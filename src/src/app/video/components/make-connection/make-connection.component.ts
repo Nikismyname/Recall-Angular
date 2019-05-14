@@ -11,6 +11,7 @@ import { MetaService } from 'src/app/services/meta-servce';
 import { ToastrService } from 'ngx-toastr';
 import { VideoService } from 'src/app/services/video.service';
 import { IVideoForConnections } from 'src/app/services/models/video/video-for-connections';
+import { IAddVideoData } from 'src/app/services/models/meta/add-video-data';
 
 enum CurrentDisplay {
   selectingVideo,
@@ -30,6 +31,7 @@ export class MakeConnectionComponent {
   CurrentDisplay = CurrentDisplay;
 
   currentDisplay: CurrentDisplay = CurrentDisplay.mainDisplay;
+  previousDisplay: CurrentDisplay = CurrentDisplay.mainDisplay;
 
   videoToVideoConnectionForm: FormGroup;
   createTopicForm: FormGroup;
@@ -37,7 +39,7 @@ export class MakeConnectionComponent {
 
   videoOneId: number;
   videoTwoId: number;
-  allVideoItems: IDirWithItemsSelect[];
+  allVideoItems: IDirWithItemsSelect[] = [];
   videoItemsLoaded: boolean = false;
 
   allTopics: ITopicFolder[] = [];
@@ -51,12 +53,12 @@ export class MakeConnectionComponent {
     private fb: FormBuilder,
     private dirService: DirectoryService,
     private route: ActivatedRoute,
-    private metaService: MetaService,
     private toastr: ToastrService,
     private videoService: VideoService,
+    private metaService: MetaService,
   ) {
     this.videoOneId = Number(this.route.snapshot.paramMap.get("id"));
-    this.loadVideo(); 
+    this.loadVideo();
 
     this.connectionTypeKeys = Object.keys(this.ConnectionType).filter(x => isNaN(Number(x)) === false);
 
@@ -69,20 +71,48 @@ export class MakeConnectionComponent {
     });
   }
 
-  loadVideo() { 
-    this.videoService.getForConnections(this.videoOneId).pipe(take(1)).subscribe(x => { 
-      this.video = x; 
+  loadVideo() {
+    this.videoService.getForConnections(this.videoOneId).pipe(take(1)).subscribe(x => {
+      this.video = x;
+      console.log(x.topics);
       this.videoLoaded = true;
+    }, error => { 
+        console.log(error);
+        this.toastr.error("Failed To Load Video!");
     });
   }
 
-  itemSelected(ids: number[]) {
+  videoSelected(ids: number[]) {
     let id = ids[0];
     this.videoTwoId = id;
     if (this.videoOneId === this.videoTwoId) {
       alert("You can not connect a video to itself!");
       return;
     }
+  }
+
+  topicSelected(topicId: number) {
+    console.log(topicId);
+    if (this.previousDisplay !== CurrentDisplay.creatingNewTopic) {//addid topic to video;
+      let data: IAddVideoData = {
+        videoId: this.video.id,
+        topicId: topicId,
+        adherence: 10,
+      }
+      this.metaService.addVideoToTopic(data).pipe(take(1)).subscribe(() => { 
+        let topic = this.allTopics.filter(x => x.id == topicId)[0];
+        this.video.topics = this.video.topics.concat(topic);
+        this.toastr.success("Topic Added To Video!");
+      }, error => { 
+          console.log(error);
+          this.toastr.error("Failed To Add Topic To Video!");
+      });
+    }
+    else {
+      this.selectedTopic = topicId;
+    }
+
+    this.switchDisplay(this.previousDisplay);
   }
 
   setVideoToVideoForm() {
@@ -115,7 +145,7 @@ export class MakeConnectionComponent {
     e.preventDefault();
     e.stopPropagation();
     console.log(this.videoToVideoConnectionForm);
-    this.currentDisplay = CurrentDisplay.mainDisplay;
+    this.switchDisplay(CurrentDisplay.mainDisplay);
   }
 
   onSubmitCreateTopic(e) {
@@ -127,15 +157,19 @@ export class MakeConnectionComponent {
 
     this.metaService.createTopic(data).pipe(take(1)).subscribe(
       x => {
-        //console.log(x);
+        if (this.allTopics.length > 0) {
+          this.allTopics = this.allTopics.concat(x);
+        }
         this.toastr.success("Created Topic!");
+        this.createTopicForm.reset();
+        this.selectedTopic = null;
       },
       error => {
         console.log(error);
         this.toastr.error("Filed at creating topic!");
       });
 
-    this.currentDisplay = CurrentDisplay.mainDisplay;
+    this.switchDisplay(CurrentDisplay.mainDisplay);
   }
 
   get vc() {
@@ -159,6 +193,24 @@ export class MakeConnectionComponent {
       case "4":
         return "Author Name";
     }
+  }
+
+  switchDisplay(display: CurrentDisplay) {
+    this.previousDisplay = this.currentDisplay;
+    this.currentDisplay = display;
+
+    if (display === CurrentDisplay.selectingTopic && this.allTopics.length === 0) {
+      this.metaService.getAllTpicsForSelect(true)
+        .pipe(take(1)).subscribe(x => { 
+          this.allTopics = x; 
+          this.topicsLoaded = true;
+        })
+    }
+  }
+
+  backFromFolderSelector() {
+    this.previousDisplay = this.currentDisplay;
+    this.currentDisplay = CurrentDisplay.mainDisplay;
   }
 
 }

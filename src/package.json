@@ -29,6 +29,7 @@
     "angular-youtube-player": "^1.0.2",
     "core-js": "^2.5.4",
     "electron-reload": "^1.4.0",
+    "ng2-tooltip-directive": "^2.1.9",
     "ngx-autosize": "^1.6.0",
     "ngx-color-picker": "^7.5.0",
     "ngx-contextmenu": "^5.1.1",

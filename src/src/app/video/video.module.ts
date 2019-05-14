@@ -23,10 +23,13 @@ import { ImportVideosComponent } from './components/import-videos/import-videos.
 
 import { SharedModule } from '../shared/shared.module';
 
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MakeConnectionComponent } from './components/make-connection/make-connection.component';
 
 import { AutosizeModule } from 'ngx-autosize';
+import { AttachedTopicComponent } from './components/connection-components/attached-topic/attached-topic.component';
+
+import { TooltipModule } from 'ng2-tooltip-directive';
 
 const components = [
   CreateVideoComponent,
@@ -40,7 +43,7 @@ const components = [
 ]; 
 
 @NgModule({
-  declarations: [...components, MakeConnectionComponent],
+  declarations: [...components, MakeConnectionComponent, AttachedTopicComponent],
   imports: [
     CommonModule,
     VideoRoutingModule,
@@ -66,6 +69,8 @@ const components = [
     MatTooltipModule,
 
     AutosizeModule,
+
+    TooltipModule,
   ],
   providers: [
     {

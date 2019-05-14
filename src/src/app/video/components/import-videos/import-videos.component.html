@@ -20,8 +20,10 @@
         *ngFor="let vid of videosForImport"
     >
         <div 
-            [matTooltip]= "vid.name + '\n' + vid.url"
-            matTooltipClass="matTooltipClass"
+            [tooltip]="vid.name + '\n' + vid.url" 
+            tooltip-class="matTooltipClass"
+            placement="bottom"
+            hide-delay="0"
             class="col-5" 
             style="background-color: #32383e; line-height: 2em; height: 4em;"
         >
