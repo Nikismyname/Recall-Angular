@@ -16,6 +16,7 @@ export class VideoPlayerComponent {
 
   @Output() videoInitialDoneEmitter: EventEmitter<void> = new EventEmitter();
   @Output() isPlayingEmitter: EventEmitter<boolean> = new EventEmitter();
+  @Output() vimeoTimeAndDuration: EventEmitter<number[]> = new EventEmitter();
 
   isDone: boolean = false;
 
@@ -128,18 +129,14 @@ export class VideoPlayerComponent {
     }
   }
 
-  async getCurrentTime(): Promise<number> {
+  getCurrentTime(): number {
     switch (this.type) {
       case VideoType.youTube:
         return Math.trunc(this.youTubePlayer.getCurrentTime());
       case VideoType.local:
         return Math.trunc(this.localPlayer.getDefaultMedia().currentTime);
       case VideoType.vimeo:
-        let time;
-        await this.vimeoPlayer.getCurrentTime().then(x => {
-          time = x
-        })
-        return time;
+        return 0;
     }
   }
 
@@ -150,8 +147,16 @@ export class VideoPlayerComponent {
       case VideoType.local:
         return Math.trunc(this.localPlayer.getDefaultMedia().duration);
       case VideoType.vimeo:
-        return this.vimeoPlayer.getDuration();
+        return 0;
     }
+  }
+
+  getVimeoTimeAndDuration() {
+    this.vimeoPlayer.getCurrentTime().then(x => {
+      this.vimeoPlayer.getDuration().then(y => { 
+        this.vimeoTimeAndDuration.emit([Math.round(x), Math.round(y)]);
+      });
+    });
   }
 
   public saveYouTubePlayer(player: YT.Player) {

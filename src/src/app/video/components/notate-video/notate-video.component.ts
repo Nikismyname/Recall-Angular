@@ -44,8 +44,13 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
 
   shouldShowOptions: boolean = false;
 
+  readyForVimeoSave: boolean = false;
+  vimeoTime: number = -1;
+  vimeoDuration: number = -1;
+  vimeoSaveIsAuto: boolean = false;
+
   options = {
-    shouldAutoSave: true,
+    shouldAutoSave: false,
   };
 
   @ViewChild("player") player: VideoPlayerComponent;
@@ -62,7 +67,7 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
     private location: Location,
     public electronService: ElectronService,
     public changeDetectionRef: ChangeDetectorRef,
-    public navigationSerice: NavigationService, 
+    public navigationSerice: NavigationService,
     public navService: NavStoreService,
   ) {
     let id = Number(this.route.snapshot.paramMap.get("id"));
@@ -86,7 +91,7 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
           } else {
             this.fileSelector.nativeElement.click();
           }
-        } else if (videoEdit.isVimeo) { 
+        } else if (videoEdit.isVimeo) {
           let token = this.urlService.extractVimeoToken(videoEdit.url);
           this.player.setUpVimeo(token);
         }
@@ -205,7 +210,9 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    this.setFieldsForSave();
+    if (!this.setFieldsForSave(false)) { 
+      return;
+    };
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -230,7 +237,9 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
   }
 
   autoSave() {
-    this.setFieldsForSave();
+    if (!this.setFieldsForSave(true)) { 
+      return;
+    };
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -251,7 +260,7 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
               note.id = dbId;
             }
 
-            this.notateService.setIdsToPrevious(newIds); 
+            this.notateService.setIdsToPrevious(newIds);
           },
           error => {
             this.toastr.error("Partial Save Failed!", "Error");
@@ -260,17 +269,41 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
     }
   }
 
-  async setFieldsForSave() {
-    let playerSeekTo = await this.player.getCurrentTime();
-    console.log("CURRENT TIME",playerSeekTo);
-    let seekDiference = this.video.seekTo - playerSeekTo;
-    if (Math.abs(seekDiference) > 2) {
-      this.video.seekTo = playerSeekTo;
-    }
+  setFieldsForSave(isAuto: boolean): boolean {
+    if (this.video.isVimeo) {
+      if (!this.readyForVimeoSave) {
+        this.player.getVimeoTimeAndDuration();
+        this.vimeoSaveIsAuto = isAuto;
+        return false;
+      } else {
+        this.readyForVimeoSave = false;
 
-    let duration = this.player.getDuration();
-    if (typeof duration === "number") {
-      this.video.duration = duration;
+        let playerSeekTo = this.vimeoTime;
+        console.log("CURRENT TIME", playerSeekTo);
+        let seekDiference = this.video.seekTo - playerSeekTo;
+        if (Math.abs(seekDiference) > 1) {
+          this.video.seekTo = playerSeekTo;
+        }
+
+        let duration = this.vimeoDuration;
+        if (typeof duration === "number") {
+          this.video.duration = duration;
+        }
+        return true;
+      }
+    }
+    else {
+      let playerSeekTo = this.player.getCurrentTime();
+      console.log("CURRENT TIME", playerSeekTo);
+      let seekDiference = this.video.seekTo - playerSeekTo;
+      if (Math.abs(seekDiference) > 2) {
+        this.video.seekTo = playerSeekTo;
+      }
+
+      let duration = this.player.getDuration();
+      if (typeof duration === "number") {
+        this.video.duration = duration;
+      }
     }
   }
 
@@ -309,7 +342,7 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
   videoInitialLoad() {
     setTimeout(() => {
       this.videoInitiaLoadDone = true;
-      console.log("duration here",this.player.getDuration());
+      console.log("duration here", this.player.getDuration());
     }, 1);
   }
 
@@ -370,11 +403,21 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
     }, 1);
   }
 
-  updateVideoNav() { 
-    this.navigationSerice.getVideoIndex(this.video.id).pipe(take(1)).subscribe(x => { 
+  updateVideoNav() {
+    this.navigationSerice.getVideoIndex(this.video.id).pipe(take(1)).subscribe(x => {
       console.log("UPDATING VIDEO NAV");
       this.navService.updateVideoNav(x);
     });
   }
 
+  vimeoDataForSave(data: number[]) {
+    this.vimeoTime = data[0];
+    this.vimeoDuration = data[1];
+    this.readyForVimeoSave = true;
+    if (this.vimeoSaveIsAuto) {
+      this.autoSave();
+    } else {
+      this.save();
+    }
+  }
 }

@@ -6,6 +6,7 @@
     <app-video-player 
         (isPlayingEmitter)="isPlayingSetter($event)"
         (videoInitialDoneEmitter)="videoInitialLoad()"
+        (vimeoTimeAndDuration)="vimeoDataForSave($event)"
         #player
     ></app-video-player>
 
