@@ -6,7 +6,11 @@ export interface IVideoIndex {
 
     description: string;
 
+    noteCount: number;
+
     order: number; 
     
-    seetTo: number;
+    seekTo: number;
+
+    duration: number;
 }

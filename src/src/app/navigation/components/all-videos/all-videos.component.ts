@@ -45,6 +45,10 @@ export class AllVideosComponent {
     let prevContainer = e.previousContainer;
     let prevColumn = prevContainer.data;
 
+    if (prevColumn === currColumn && prevIndex === currentIndex) {
+      return;
+    }
+
     let orderings = this.reorderService.generateOrderingWithElements(
       this.videos,
       currentIndex,

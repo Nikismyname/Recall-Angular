@@ -27,4 +27,9 @@ export class UrlService {
           return videoToken;
     }
   }
+
+  extractVimeoToken(url: string) {
+    let tokens = url.split("/");
+    return Number(tokens[tokens.length-1]);
+  }
 }

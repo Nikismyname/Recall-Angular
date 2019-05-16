@@ -23,3 +23,9 @@
         <source *ngFor="let source of localSources" [src]="source">
     </video>
 </vg-player>
+
+<app-vimeo-player
+  *ngIf="type===VideoType.vimeo"
+  (onPlayerReadyEmitter)="saveVimeoPlayer($event)"
+  [token]="vimeoToken"
+></app-vimeo-player>

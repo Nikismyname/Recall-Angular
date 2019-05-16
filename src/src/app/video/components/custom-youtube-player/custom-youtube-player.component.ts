@@ -8,7 +8,7 @@ import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 export class CustomYoutubePlayerComponent implements OnInit {
 
   public YT: any;
-  public player: any;
+  public player: YT.Player;
   public reframed: Boolean = false;
   public scriptAlreadyHere: boolean = false;
 

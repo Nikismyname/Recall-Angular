@@ -148,6 +148,23 @@ export class NavStoreService {
         //TODO; make the video order last;
         newNav.videos = newNav.videos.concat(video);
     }
+
+    updateVideoNav(video: IVideoIndex) {
+        debugger;
+        console.log("UPDATING VIDEO NAV 2");
+        let navArray = this.navHistory.filter(x => x.videos.some(x => x.id == video.id));
+        if (navArray.length !== 1) { alert("Nav Finding Problem"); return; }
+        let nav = navArray[0]; 
+        let videoArray = nav.videos.filter(x => x.id == video.id);
+        if (videoArray.length !== 1) { alert("Video Finding Problem"); return; }
+        let currVideo = videoArray[0];
+        currVideo.noteCount = video.noteCount; 
+        currVideo.description = video.description; 
+        currVideo.name = video.name;
+        currVideo.seekTo = video.seekTo;
+        currVideo.duration = video.duration;
+    }
+
     /* #endregion */
 
     /* #region  DELETE */

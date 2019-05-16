@@ -1,3 +1,4 @@
+<!-- VIDEO DISPLAY> -->
 <div class="row">
   <div #frameDiv class="col-sm-10">
     <app-custom-youtube-player
@@ -22,9 +23,12 @@
     </vg-player>
   </div>
 </div>
+<!-- VIDEO DISPLAY^ -->
 
+<!-- CREATION FORM> -->
 <form [formGroup]="form" (submit)="onSubmit()">
 <div class="row mt-5">
+  <!-- RADION BUTTONS> -->
   <div class="col-10" style="display: flex; align-items: center; justify-content: center">
     <div class="VideoType">
       <input 
@@ -47,8 +51,8 @@
         formControlName="videoType"
         class="mr-2 ml-2"
         name="videoType"
+        #vimeo
         value="Vimeo"
-        disabled
       />
       <label for="isVimeo">Vimeo</label>
     </div>
@@ -70,8 +74,9 @@
   <div class="col-10 alert alert-warning"
     *ngIf="c['videoType']?.hasError('required')"
   >Video Type is required</div>
+  <!-- RADION BUTTONS^ -->
 
-  <ng-template [ngIf]="youTube.checked || (local.checked && electronService.isElectronApp)">
+  <ng-template [ngIf]="youTube.checked || vimeo.checked || (local.checked && electronService.isElectronApp)">
     <p 
       *ngIf="localVidSelected && local.checked && electronService.isElectronApp"
       style="color: white" 
@@ -88,7 +93,7 @@
       />
     </div>
 
-    <div class="col-2" *ngIf="youTube.checked">
+    <div class="col-2" *ngIf="youTube.checked || vimeo.checked">
         <button type="button" (click)="onClickPlay()" class="btn btn-primary btn-block">Play</button>
     </div>
     <div class="col-2" *ngIf="local.checked && electronService.isElectronApp">
@@ -130,10 +135,10 @@
     />
   </div>
 
-  <div></div>
-      <button type="submit" class="btn btn-success" [disabled]="form.invalid">Submit</button>
+  <button type="submit" class="btn btn-success" [disabled]="form.invalid">Submit</button>
   </div>
 
   <button (click)="localFileSelect()">testButton</button>
 
 </form>
+<!-- CREATION FORM^ -->

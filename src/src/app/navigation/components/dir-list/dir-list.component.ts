@@ -25,6 +25,10 @@ export class DirListComponent {
   onDropped(e) {
     let currentIndex = e.currentIndex;
     let prevIndex = e.previousIndex;
+    if (currentIndex == prevIndex) {
+      return;  
+    }
+
     let orderings = this.reorderService.generateReorderingsDir(this.dirs, currentIndex, prevIndex);
 
     this.navService.reorderDirectories({

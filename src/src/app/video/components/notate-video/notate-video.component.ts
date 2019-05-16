@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { INoteInternal, NoteType } from 'src/app/services/models/video/note-internal';
 import { VideoType } from 'src/app/services/models/others/video-type';
 import { VideoService } from 'src/app/services/video.service';
@@ -13,13 +13,15 @@ import * as c from '../../../utilities/constants';
 import { ToastrService } from 'ngx-toastr';
 import { Location } from '@angular/common';
 import { ElectronService } from 'ngx-electron';
+import { NavigationService } from 'src/app/services/navigation.service';
+import { NavStoreService } from 'src/app/services/data-services/nav-store.service.1';
 
 @Component({
   selector: 'app-notate-video',
   templateUrl: './notate-video.component.html',
   styleUrls: ['./notate-video.component.css']
 })
-export class NotateVideoComponent implements OnInit {
+export class NotateVideoComponent implements OnInit, OnDestroy {
   VideoType = VideoType;
   NoteType = NoteType;
 
@@ -60,6 +62,8 @@ export class NotateVideoComponent implements OnInit {
     private location: Location,
     public electronService: ElectronService,
     public changeDetectionRef: ChangeDetectorRef,
+    public navigationSerice: NavigationService, 
+    public navService: NavStoreService,
   ) {
     let id = Number(this.route.snapshot.paramMap.get("id"));
     this.videoService.getForEdit(id).pipe(take(1)).subscribe(
@@ -82,6 +86,9 @@ export class NotateVideoComponent implements OnInit {
           } else {
             this.fileSelector.nativeElement.click();
           }
+        } else if (videoEdit.isVimeo) { 
+          let token = this.urlService.extractVimeoToken(videoEdit.url);
+          this.player.setUpVimeo(token);
         }
       },
       error => {
@@ -107,7 +114,7 @@ export class NotateVideoComponent implements OnInit {
   ngOnInit() {
   };
 
-  addNewNote(parentId: number = null, type: NoteType = NoteType.Note) {
+  async addNewNote(parentId: number = null, type: NoteType = NoteType.Note) {
 
     let parentDbId: number = -1;
     let level: number = 0;
@@ -173,7 +180,7 @@ export class NotateVideoComponent implements OnInit {
       level: level,
       deleted: false,
       type: type,
-      seekTo: this.player.getCurrentTime(),
+      seekTo: await this.player.getCurrentTime(),
       backgroundColor: c.secondaryColor,
       textColor: "white",
       borderColor: borderColor,
@@ -198,13 +205,7 @@ export class NotateVideoComponent implements OnInit {
   }
 
   save() {
-    let playerSeekTo = this.player.getCurrentTime();
-    let seekDiference = this.video.seekTo - playerSeekTo;
-    if (Math.abs(seekDiference) > 2) {
-      this.video.seekTo = playerSeekTo;
-    }
-
-    this.video.duration = this.player.getDuration();
+    this.setFieldsForSave();
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -229,13 +230,7 @@ export class NotateVideoComponent implements OnInit {
   }
 
   autoSave() {
-    let playerSeekTo = this.player.getCurrentTime()
-    let seekDiference = this.video.seekTo - playerSeekTo;
-    if (Math.abs(seekDiference) > 2) {
-      this.video.seekTo = playerSeekTo;
-    }
-
-    this.video.duration = this.player.getDuration();
+    this.setFieldsForSave();
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -262,6 +257,20 @@ export class NotateVideoComponent implements OnInit {
             this.toastr.error("Partial Save Failed!", "Error");
           },
         );
+    }
+  }
+
+  async setFieldsForSave() {
+    let playerSeekTo = await this.player.getCurrentTime();
+    console.log("CURRENT TIME",playerSeekTo);
+    let seekDiference = this.video.seekTo - playerSeekTo;
+    if (Math.abs(seekDiference) > 2) {
+      this.video.seekTo = playerSeekTo;
+    }
+
+    let duration = this.player.getDuration();
+    if (typeof duration === "number") {
+      this.video.duration = duration;
     }
   }
 
@@ -308,6 +317,10 @@ export class NotateVideoComponent implements OnInit {
     this.player.setUpYouTube(this.urlService.extractToken(this.video.url));
   }
 
+  changeVimeoVideo() {
+    this.player.setUpYouTube(this.urlService.extractToken(this.video.url));
+  }
+
   changeLocalVideoElectron() {
     if (this.electronService.isElectronApp) {
       let strings = this.electronService.remote.dialog.showOpenDialog({ properties: ['openFile'] });
@@ -347,6 +360,7 @@ export class NotateVideoComponent implements OnInit {
 
   ngOnDestroy() {
     clearInterval(this.autoSaveInterval);
+    this.updateVideoNav();
   }
 
   focusOnNewlyCreatedNote(id: number) {
@@ -354,6 +368,13 @@ export class NotateVideoComponent implements OnInit {
       let el: HTMLElement = document.getElementById(id.toString());
       el.focus();
     }, 1);
+  }
+
+  updateVideoNav() { 
+    this.navigationSerice.getVideoIndex(this.video.id).pipe(take(1)).subscribe(x => { 
+      console.log("UPDATING VIDEO NAV");
+      this.navService.updateVideoNav(x);
+    });
   }
 
 }

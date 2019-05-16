@@ -82,6 +82,11 @@
             (click)="changeYouTubeVideo()"
         >Play</button>
         <button
+            *ngIf="video.isVimeo"
+            class="btn btn-primary btn-block"
+            (click)="changeVimeoVideo()"
+        >Play</button>
+        <button
             *ngIf="video.isLocal && electronService.isElectronApp"
             class="btn btn-primary btn-block"
             (click)="changeLocalVideoElectron()"
@@ -95,6 +100,7 @@
     <div class="col-2"></div>
     <!-- URL^ -->
     
+    <!-- NAME> -->
     <label class="col-2 col-form-label text-right">Name</label>
     <div class="col-8">
         <input 
@@ -104,7 +110,9 @@
         />
     </div>
     <div class="col-2"></div>
+    <!-- NAME^ -->
 
+    <!-- DESCRIPTION> -->
     <label class="col-2 col-form-label text-right">Description</label>
     <div class="col-8">
         <input 
@@ -113,7 +121,8 @@
             type="text" 
         />
     </div>
-    
+    <!-- DESCRIPTION^ -->
+
     <div class="col-2"></div>
 
     <!-- OPTIONS> -->

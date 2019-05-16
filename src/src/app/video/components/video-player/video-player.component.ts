@@ -3,6 +3,8 @@ import { VideoType } from 'src/app/services/models/others/video-type';
 import { SafeUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
 import { ElectronService } from 'ngx-electron';
+import { VimeoPlayerComponent } from '../vimeo-player/vimeo-player.component';
+import Player from '@vimeo/player';
 
 @Component({
   selector: 'app-video-player',
@@ -20,6 +22,10 @@ export class VideoPlayerComponent {
   initialSeekToTime: number;
 
   type: VideoType;
+
+  vimeoPlayer: Player;
+  vimeoToken: number;
+  vimeoSetUp: boolean;
 
   youTubePlayer: YT.Player;
   token: string;
@@ -50,6 +56,17 @@ export class VideoPlayerComponent {
     this.youTubeSetUp = true;
   }
 
+  setUpVimeo(token: number) {
+    if (this.vimeoSetUp) {
+      this.vimeoPlayer.loadVideo(token);
+      this.vimeoPlayer.setCurrentTime(this.initialSeekToTime);
+      return;
+    }
+    this.type = VideoType.vimeo;
+    this.vimeoToken = token;
+    this.vimeoSetUp = true;
+  }
+
   setUpLocal(url: SafeUrl) {
     if (this.localSetUp) {
       this.localSources = [];
@@ -69,10 +86,6 @@ export class VideoPlayerComponent {
     this.localSources.push(url);
   }
 
-  serUpVimeo() {
-
-  }
-
   play() {
     switch (this.type) {
       case VideoType.youTube:
@@ -82,6 +95,7 @@ export class VideoPlayerComponent {
         this.localPlayer.getDefaultMedia().play();
         break;
       case VideoType.vimeo:
+        this.vimeoPlayer.play();
         break;
     }
   }
@@ -95,6 +109,7 @@ export class VideoPlayerComponent {
         this.localPlayer.getDefaultMedia().pause();
         break;
       case VideoType.vimeo:
+        this.vimeoPlayer.pause();
         break;
     }
   }
@@ -108,18 +123,23 @@ export class VideoPlayerComponent {
         this.localPlayer.getDefaultMedia().currentTime = time;
         break;
       case VideoType.vimeo:
+        this.vimeoPlayer.setCurrentTime(time);
         break;
     }
   }
 
-  getCurrentTime(): number {
+  async getCurrentTime(): Promise<number> {
     switch (this.type) {
       case VideoType.youTube:
         return Math.trunc(this.youTubePlayer.getCurrentTime());
       case VideoType.local:
         return Math.trunc(this.localPlayer.getDefaultMedia().currentTime);
       case VideoType.vimeo:
-        return 0;
+        let time;
+        await this.vimeoPlayer.getCurrentTime().then(x => {
+          time = x
+        })
+        return time;
     }
   }
 
@@ -130,7 +150,7 @@ export class VideoPlayerComponent {
       case VideoType.local:
         return Math.trunc(this.localPlayer.getDefaultMedia().duration);
       case VideoType.vimeo:
-        return 42;
+        return this.vimeoPlayer.getDuration();
     }
   }
 
@@ -148,6 +168,17 @@ export class VideoPlayerComponent {
       () => {
         this.videoInitialDoneEmitter.emit();
     });
+  }
+
+  public saveVimeoPlayer(player: VimeoPlayerComponent) {
+    this.vimeoPlayer = player;
+    this.vimeoPlayer.on("pause", () => { 
+      this.isPlayingEmitter.emit(false);
+    })
+    this.vimeoPlayer.on("play", () => { 
+      this.isPlayingEmitter.emit(true);
+    })
+    this.vimeoPlayer.setCurrentTime(this.initialSeekToTime);
   }
 
   counter: number = 0;

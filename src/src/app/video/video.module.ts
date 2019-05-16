@@ -30,6 +30,7 @@ import { AutosizeModule } from 'ngx-autosize';
 import { AttachedTopicComponent } from './components/connection-components/attached-topic/attached-topic.component';
 
 import { TooltipModule } from 'ng2-tooltip-directive';
+import { VimeoPlayerComponent } from './components/vimeo-player/vimeo-player.component';
 
 const components = [
   CreateVideoComponent,
@@ -43,7 +44,7 @@ const components = [
 ]; 
 
 @NgModule({
-  declarations: [...components, MakeConnectionComponent, AttachedTopicComponent],
+  declarations: [...components, MakeConnectionComponent, AttachedTopicComponent, VimeoPlayerComponent],
   imports: [
     CommonModule,
     VideoRoutingModule,
