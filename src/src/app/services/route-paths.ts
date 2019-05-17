@@ -12,6 +12,8 @@ export namespace RoutesNoSlash {
     export const videoSearchPath = "video/search";
     export const videoImportPath = "video/import";
     export const videoConnectPath = "video/connect";
+
+    export const optionsPath = "options";
 }
 
 @Injectable({
@@ -29,6 +31,8 @@ export class RoutePaths {
     public videoSearchPath = "/" + RoutesNoSlash.videoSearchPath;
     public videoImportTath = "/" + RoutesNoSlash.videoImportPath;
     public videoConnectPath = "/" + RoutesNoSlash.videoConnectPath;
+
+    public optionsPath = "/" + RoutesNoSlash.optionsPath;
 }
 
 export function forFeatureRouting(path: string) {

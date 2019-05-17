@@ -12,12 +12,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YTPlayerConfig } from 'angular-youtube-player';
 
 import { NgxElectronModule } from 'ngx-electron';
+import { OptionsComponent } from './components/options/options.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     HomePageComponent,
+    OptionsComponent,
   ],
   imports: [
     BrowserModule,

@@ -9,6 +9,7 @@ import { take } from "rxjs/operators"
 import { AuthStoreService } from 'src/app/services/data-services/auth-store.service';
 import { IUser } from 'src/app/services/models/authentication/user';
 import { ToastrService } from 'ngx-toastr';
+import { OptionsStoreService } from 'src/app/services/data-services/options-store-service';
 
 @Component({
   selector: 'app-login',
@@ -31,6 +32,7 @@ export class LoginComponent {
     private authStoreService: AuthStoreService,
     private router: Router,
     private toastr: ToastrService,
+    private optionsService: OptionsStoreService,
   ) {
   }
 
@@ -44,6 +46,7 @@ export class LoginComponent {
           rootDirectoryId: loginData.rootDirectoryId,
         }; 
         this.authStoreService.setUser(setUserData);
+        this.optionsService.setAllOptions(loginData.options);
 
         localStorage.setItem("user", JSON.stringify(setUserData));
         localStorage.setItem("token", setUserData.token)

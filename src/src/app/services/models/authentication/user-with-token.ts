@@ -1,3 +1,5 @@
+import { IAllOptions } from '../options/all-options';
+
 export interface IUserWithToken { 
     username: string;
 
@@ -10,4 +12,6 @@ export interface IUserWithToken {
     token: string;
 
     rootDirectoryId: number;
+
+    options: IAllOptions
 }

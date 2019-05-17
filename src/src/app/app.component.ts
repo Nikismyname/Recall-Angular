@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { AuthStoreService } from './services/data-services/auth-store.service';
 import { ElectronService } from 'ngx-electron';
 import { NavStoreService } from './services/data-services/nav-store.service.1';
@@ -8,13 +8,16 @@ import { ToastrService } from 'ngx-toastr';
 import { IUser } from './services/models/authentication/user';
 import { Router } from '@angular/router';
 import { RoutesNoSlash } from './services/route-paths'; 
+import { OptionsStoreService } from './services/data-services/options-store-service';
+import { ThemeType } from './services/models/options/theme-type';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
+  ThemeType = ThemeType
 
   title = 'recall';
   constructor(
@@ -24,7 +27,10 @@ export class AppComponent {
     private videoService: VideoService,
     private toastr: ToastrService,
     private router: Router,
+    public optionsService: OptionsStoreService,
   ) {
+    this.setStyles();
+
     if (this.electronService.isElectronApp) {
       electronService.webFrame.setZoomFactor(1.75);
     }
@@ -33,6 +39,8 @@ export class AppComponent {
     if (loginData !== null) {
       this.authService.setUser(loginData);
     }
+
+    this.optionsService.getAllOptionsFromLocalStorage(); 
 
     window.addEventListener("message", event => {
       if (event.source != window || event["data"]["message"] !== "recallCreate") { return; }
@@ -44,6 +52,22 @@ export class AppComponent {
         event["data"]["type"],
       )
     }, false);
+  }
+
+  setStyles() {
+    this.optionsService.options$.subscribe(x => { 
+      if (x !== null) {
+        console.log("OPTIONS");
+        if (x.theme === ThemeType.Lux) {
+          require("style-loader!./../css/lux.css");
+        } else if (x.theme = ThemeType.Slate) {
+          require("style-loader!./../css/slate.css");
+        }
+      } else {
+        console.log("NO OPTIONS!");
+        require("style-loader!./../css/slate.css");
+      }
+    });
   }
 
   //directory can be "root", "current", "chooseLater"
@@ -118,5 +142,8 @@ export class AppComponent {
         }
       });
     }
+  }
+  ngOnDestroy() {
+    //this.optionsService.saveAllOptionsToLocalStorage();
   }
 }

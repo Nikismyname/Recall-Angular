@@ -1,3 +1,17 @@
+<!-- <div *ngIf="optionsService.options$ | async as options else default">
+    <h1>GOT OPTIONS {{options.theme}}</h1>
+    <ng-template [ngIf]="options.theme === ThemeType.Lux">
+        <link rel="stylesheet" href="../lux.css" *ngIf="options.theme === ThemeType.Lux" />
+    </ng-template>
+    <ng-template [ngIf]="options.theme === ThemeType.Slate">
+        <link rel="stylesheet" href="./css/bootstrap-slate-4-1-3.css" *ngIf="options.theme === ThemeType.Slate" />
+    </ng-template>
+</div>
+<ng-template #default>
+    <h1>NO OPTIONS</h1>
+    <link rel="stylesheet" href="./css/bootstrap-slate-4-1-3.css" />
+</ng-template> -->
+
 <app-navbar></app-navbar>
 <div class="container p-0">
     <router-outlet></router-outlet>

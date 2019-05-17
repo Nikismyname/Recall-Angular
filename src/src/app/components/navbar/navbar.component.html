@@ -22,6 +22,10 @@
           <li *ngIf="user.isUser" class="nav-item">
             <a [routerLink]="[routePaths.videoImportTath]" class="nav-link no-text-selection">Import Videos</a>
           </li>
+
+          <li *ngIf="user.isUser" class="nav-item">
+              <a [routerLink]="[routePaths.optionsPath]" class="nav-link no-text-selection">Options</a>
+            </li>
         </ul>
 
         <ul class="navbar-nav ml-auto">
