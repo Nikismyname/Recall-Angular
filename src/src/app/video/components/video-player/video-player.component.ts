@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { VideoType } from 'src/app/services/models/others/video-type';
 import { SafeUrl } from '@angular/platform-browser';
 import { VgAPI } from 'videogular2/core';
@@ -16,7 +16,6 @@ export class VideoPlayerComponent {
 
   @Output() videoInitialDoneEmitter: EventEmitter<void> = new EventEmitter();
   @Output() isPlayingEmitter: EventEmitter<boolean> = new EventEmitter();
-  @Output() vimeoTimeAndDuration: EventEmitter<number[]> = new EventEmitter();
 
   isDone: boolean = false;
 
@@ -59,8 +58,10 @@ export class VideoPlayerComponent {
 
   setUpVimeo(token: number) {
     if (this.vimeoSetUp) {
-      this.vimeoPlayer.loadVideo(token);
-      this.vimeoPlayer.setCurrentTime(this.initialSeekToTime);
+      this.vimeoPlayer.loadVideo(token).then(x => {
+        this.vimeoPlayer.setCurrentTime(this.initialSeekToTime)
+      });
+      
       return;
     }
     this.type = VideoType.vimeo;
@@ -129,34 +130,26 @@ export class VideoPlayerComponent {
     }
   }
 
-  getCurrentTime(): number {
+  getCurrentTime(): Promise<number> | number {
     switch (this.type) {
       case VideoType.youTube:
-        return Math.trunc(this.youTubePlayer.getCurrentTime());
+        return this.youTubePlayer.getCurrentTime();
       case VideoType.local:
-        return Math.trunc(this.localPlayer.getDefaultMedia().currentTime);
+        return this.localPlayer.getDefaultMedia().currentTime;
       case VideoType.vimeo:
-        return 0;
+        return this.vimeoPlayer.getCurrentTime(); 
     }
   }
 
-  getDuration() {
+  getDuration(): Promise<number> | number {
     switch (this.type) {
       case VideoType.youTube:
-        return Math.trunc(this.youTubePlayer.getDuration());
+        return this.youTubePlayer.getDuration();
       case VideoType.local:
-        return Math.trunc(this.localPlayer.getDefaultMedia().duration);
+        return this.localPlayer.getDefaultMedia().duration;
       case VideoType.vimeo:
-        return 0;
+        return this.vimeoPlayer.getDuration();
     }
-  }
-
-  getVimeoTimeAndDuration() {
-    this.vimeoPlayer.getCurrentTime().then(x => {
-      this.vimeoPlayer.getDuration().then(y => { 
-        this.vimeoTimeAndDuration.emit([Math.round(x), Math.round(y)]);
-      });
-    });
   }
 
   public saveYouTubePlayer(player: YT.Player) {

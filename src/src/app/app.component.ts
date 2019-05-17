@@ -41,14 +41,18 @@ export class AppComponent {
         event["data"]["name"],
         event["data"]["url"],
         event["data"]["shouldOpen"], 
+        event["data"]["type"],
       )
     }, false);
   }
 
   //directory can be "root", "current", "chooseLater"
-  createExternalVideo(directory: string, name: string, url: string, shouldOpen: boolean) {
+  createExternalVideo(directory: string, name: string, url: string, shouldOpen: boolean, type: string) {
     url = decodeURIComponent(url);
     console.log("Event Items Here: ", directory, name, url);
+
+    let isVimeo = type === "vimeo";
+    let isYouTube = type === "youtube";
 
     let chooseLater: boolean = directory === "chooseLater";
     let current: boolean = directory === "current";
@@ -70,6 +74,7 @@ export class AppComponent {
       this.videoService.addExtension({
         name: name,
         url: url,
+        type: type,
       }).pipe(take(1)).subscribe(() => { }, error => {
         console.log(error);
         this.toastr.error("Filed at storing Extension Video!");
@@ -84,8 +89,8 @@ export class AppComponent {
         name: videoName,
         url: url,
         description: name,
-        isYouTube: true,
-        isVimeo: false,
+        isYouTube: isYouTube,
+        isVimeo: isVimeo,
         isLocal: false
       }).pipe(take(1)).subscribe(videoNav => {
         this.navService.registerCreatedVideo(videoNav);
@@ -103,8 +108,8 @@ export class AppComponent {
         name: videoName,
         url: url,
         description: name,
-        isYouTube: true,
-        isVimeo: false,
+        isYouTube: isYouTube,
+        isVimeo: isVimeo,
         isLocal: false
       }).pipe(take(1)).subscribe(videoNav => {
         this.navService.registerCreatedVideo(videoNav, -1);

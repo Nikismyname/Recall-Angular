@@ -44,11 +44,6 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
 
   shouldShowOptions: boolean = false;
 
-  readyForVimeoSave: boolean = false;
-  vimeoTime: number = -1;
-  vimeoDuration: number = -1;
-  vimeoSaveIsAuto: boolean = false;
-
   options = {
     shouldAutoSave: false,
   };
@@ -185,7 +180,7 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
       level: level,
       deleted: false,
       type: type,
-      seekTo: await this.player.getCurrentTime(),
+      seekTo:Math.trunc(await this.player.getCurrentTime()),
       backgroundColor: c.secondaryColor,
       textColor: "white",
       borderColor: borderColor,
@@ -209,10 +204,8 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
     note.deleted = true;
   }
 
-  save() {
-    if (!this.setFieldsForSave(false)) { 
-      return;
-    };
+  async save() {
+    await this.setFieldsForSave();
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -236,10 +229,8 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
     }
   }
 
-  autoSave() {
-    if (!this.setFieldsForSave(true)) { 
-      return;
-    };
+  async autoSave() {
+    await this.setFieldsForSave();
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -269,42 +260,19 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
     }
   }
 
-  setFieldsForSave(isAuto: boolean): boolean {
-    if (this.video.isVimeo) {
-      if (!this.readyForVimeoSave) {
-        this.player.getVimeoTimeAndDuration();
-        this.vimeoSaveIsAuto = isAuto;
-        return false;
-      } else {
-        this.readyForVimeoSave = false;
-
-        let playerSeekTo = this.vimeoTime;
-        console.log("CURRENT TIME", playerSeekTo);
-        let seekDiference = this.video.seekTo - playerSeekTo;
-        if (Math.abs(seekDiference) > 1) {
-          this.video.seekTo = playerSeekTo;
-        }
-
-        let duration = this.vimeoDuration;
-        if (typeof duration === "number") {
-          this.video.duration = duration;
-        }
-        return true;
-      }
-    }
-    else {
-      let playerSeekTo = this.player.getCurrentTime();
+  async setFieldsForSave() {
+      let playerSeekTo = Math.trunc(await this.player.getCurrentTime());
       console.log("CURRENT TIME", playerSeekTo);
       let seekDiference = this.video.seekTo - playerSeekTo;
       if (Math.abs(seekDiference) > 2) {
         this.video.seekTo = playerSeekTo;
       }
 
-      let duration = this.player.getDuration();
+      let duration = Math.trunc(await this.player.getDuration());
       if (typeof duration === "number") {
         this.video.duration = duration;
       }
-    }
+    // }
   }
 
   onFileSelected(e) {// for video player
@@ -351,7 +319,7 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
   }
 
   changeVimeoVideo() {
-    this.player.setUpYouTube(this.urlService.extractToken(this.video.url));
+    this.player.setUpVimeo(this.urlService.extractVimeoToken(this.video.url));
   }
 
   changeLocalVideoElectron() {
@@ -408,16 +376,5 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
       console.log("UPDATING VIDEO NAV");
       this.navService.updateVideoNav(x);
     });
-  }
-
-  vimeoDataForSave(data: number[]) {
-    this.vimeoTime = data[0];
-    this.vimeoDuration = data[1];
-    this.readyForVimeoSave = true;
-    if (this.vimeoSaveIsAuto) {
-      this.autoSave();
-    } else {
-      this.save();
-    }
   }
 }

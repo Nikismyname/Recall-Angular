@@ -6,7 +6,6 @@
     <app-video-player 
         (isPlayingEmitter)="isPlayingSetter($event)"
         (videoInitialDoneEmitter)="videoInitialLoad()"
-        (vimeoTimeAndDuration)="vimeoDataForSave($event)"
         #player
     ></app-video-player>
 
@@ -244,5 +243,4 @@
 <!-- BOTTOM_CONTROLLS^-->
 
 <input (change)="onFileSelected($event)" #fileSelector type="file" accept="video/*" hidden/>
-
 <!-- <button (click)="this.autoSave()" class="btn btn-primary">AutoSave</button> -->
