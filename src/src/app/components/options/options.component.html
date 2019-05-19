@@ -1,3 +1,12 @@
-<ng-template [ngIf]="options">
-  {{options.theme}}
-</ng-template>
+<form [formGroup]="form" (submit)="onSubmit()">
+  <div class="row mt-5">
+    <label for="theme-select" class="col-2 col-form-label text-right">Url</label>
+      <div class="col-6">
+      <select formControlName="theme" id="theme-select" class="form-control-black">
+        <option *ngFor="let key of themeTypeKeys" [value]="key">{{ThemeType[key]}}</option>
+      </select>
+    </div>
+    <div class="col-4"></div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>

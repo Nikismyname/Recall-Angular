@@ -32,6 +32,8 @@ import { AttachedTopicComponent } from './components/connection-components/attac
 import { TooltipModule } from 'ng2-tooltip-directive';
 import { VimeoPlayerComponent } from './components/vimeo-player/vimeo-player.component';
 
+import {AngularFittextModule} from 'angular-fittext';
+
 const components = [
   CreateVideoComponent,
   NotateVideoComponent,
@@ -39,12 +41,15 @@ const components = [
   NoteComponent,
   CustomYoutubePlayerComponent,
   ImportVideosComponent,
-
+  MakeConnectionComponent,
+  AttachedTopicComponent,
+  VimeoPlayerComponent,
+  
   Test1Component
 ]; 
 
 @NgModule({
-  declarations: [...components, MakeConnectionComponent, AttachedTopicComponent, VimeoPlayerComponent],
+  declarations: [...components],
   imports: [
     CommonModule,
     VideoRoutingModule,
@@ -72,6 +77,8 @@ const components = [
     AutosizeModule,
 
     TooltipModule,
+
+    AngularFittextModule,
   ],
   providers: [
     {

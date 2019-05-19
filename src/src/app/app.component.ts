@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthStoreService } from './services/data-services/auth-store.service';
 import { ElectronService } from 'ngx-electron';
 import { NavStoreService } from './services/data-services/nav-store.service.1';
@@ -16,7 +16,7 @@ import { ThemeType } from './services/models/options/theme-type';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnDestroy {
+export class AppComponent {
   ThemeType = ThemeType
 
   title = 'recall';
@@ -29,6 +29,7 @@ export class AppComponent implements OnDestroy {
     private router: Router,
     public optionsService: OptionsStoreService,
   ) {
+    //this.loadIfNot("slate", "./../assets/slate.css");
     this.setStyles();
 
     if (this.electronService.isElectronApp) {
@@ -55,19 +56,51 @@ export class AppComponent implements OnDestroy {
   }
 
   setStyles() {
-    this.optionsService.options$.subscribe(x => { 
-      if (x !== null) {
-        console.log("OPTIONS");
-        if (x.theme === ThemeType.Lux) {
-          require("style-loader!./../css/lux.css");
-        } else if (x.theme = ThemeType.Slate) {
-          require("style-loader!./../css/slate.css");
+    this.optionsService.options$.subscribe(options => { 
+      if (options !== null) {
+        console.log("OPTIONS, ", options);
+        if (options.theme === ThemeType.Lux) {
+          console.log("LUX");
+          this.loadIfNot("lux", "./../assets/css/lux.css");
+          this.disableCss("slate");
+          //require("style-loader!");
+        } else if (options.theme === ThemeType.Slate) {
+          console.log("SLATE");
+          this.loadIfNot("slate", "./../assets/slate.css");
+          this.disableCss("lux");
+          //require("style-loader!./../css/slate.css");
+        } else {
+          console.log("No Theme Match");
         }
       } else {
-        console.log("NO OPTIONS!");
-        require("style-loader!./../css/slate.css");
+        console.log("DEFAULT");
+        this.loadIfNot("slate", "./../assets/slate.css");
+        this.disableCss("lux");
       }
     });
+  }
+
+  loadIfNot(cssId,url){
+  //   if (!document.getElementById(cssId)){
+  //      var head  = document.getElementsByTagName('head')[0];
+  //      var link  = document.createElement('link');
+  //      link.id   = cssId;
+  //      link.rel  = 'stylesheet';
+  //      link.type = 'text/css';
+  //      link.href = url;
+  //      link.media = 'all';
+  //     head.appendChild(link);
+  //     console.log("created");
+  //  }else{
+      document.getElementById(cssId)["disabled"] = false;///i fit's already there, enable it
+      console.log("enabled");
+  //  }
+  }
+  
+  disableCss(cssId) {
+    if (document.getElementById(cssId)) {
+      document.getElementById(cssId)["disabled"] = true;
+    }
   }
 
   //directory can be "root", "current", "chooseLater"
@@ -142,8 +175,5 @@ export class AppComponent implements OnDestroy {
         }
       });
     }
-  }
-  ngOnDestroy() {
-    //this.optionsService.saveAllOptionsToLocalStorage();
   }
 }

@@ -13,6 +13,7 @@ import { YTPlayerConfig } from 'angular-youtube-player';
 
 import { NgxElectronModule } from 'ngx-electron';
 import { OptionsComponent } from './components/options/options.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { OptionsComponent } from './components/options/options.component';
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     NgxElectronModule,
+    ReactiveFormsModule,
   ],
   providers: [
     {
