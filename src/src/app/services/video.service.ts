@@ -18,27 +18,31 @@ export class VideoService {
 
     constructor(
         private http: HttpClient
-    ) {}
+    ) { }
 
-    create = (data: IVideoCreate) => { 
+    create = (data: IVideoCreate) => {
         return this.http.post<IVideoIndex>("Video/Create", JSON.stringify(data));
     }
 
-    getForEdit = (id: number) => { 
-        return this.http.post<IVideoEdit>("Video/GetForEdit", JSON.stringify(id)); 
+    getForEdit = (id: number) => {
+        return this.http.post<IVideoEdit>("Video/GetForEdit", JSON.stringify(id));
     }
 
-    getForConnections = (id: number) => { 
-        return this.http.post<IVideoForConnections>("Video/GetForConnections", JSON.stringify(id)); 
+    getForView = (id: number) => {
+        return this.http.post<IVideoEdit>("Video/GetForView", JSON.stringify(id));
     }
 
-    save = (data: IVideoSave) => { 
-        return this.http.post<number[][]>("Video/Save", JSON.stringify(data)); 
-    } 
+    getForConnections = (id: number) => {
+        return this.http.post<IVideoForConnections>("Video/GetForConnections", JSON.stringify(id));
+    }
 
-    delete = (id: number) => { 
+    save = (data: IVideoSave) => {
+        return this.http.post<number[][]>("Video/Save", JSON.stringify(data));
+    }
+
+    delete = (id: number) => {
         return this.http.post<void>("Video/Delete", JSON.stringify(id));
-    } 
+    }
 
     move = (data: IVideoMove) => {
         return this.http.post<IVideoMoveWithOrigin>("Video/MoveVideo", JSON.stringify(data));
@@ -46,15 +50,23 @@ export class VideoService {
 
 
 
-    addExtension = (data: IExtensionAddData) => { 
+    addExtension = (data: IExtensionAddData) => {
         return this.http.post<void>("Video/AddExtensionVideo", JSON.stringify(data));
-    } 
+    }
 
-    getExtensionVideos = () => { 
+    getExtensionVideos = () => {
         return this.http.get<IExtensionAddDataWithId[]>("Video/GetExtesionVideos");
     }
 
-    ConvertExtensionVideo = (data: IConvertExtensionData) => { 
+    convertExtensionVideo = (data: IConvertExtensionData) => {
         return this.http.post<IVideoIndex>("Video/ConvertExtensionVideo", JSON.stringify(data));
+    }
+
+    makePublic = (videoId) => {
+        return this.http.post<void>("Video/MakePublic", JSON.stringify(videoId));
+    }
+
+    makePrivate = (videoId) => { 
+        return this.http.post<void>("Video/MakePrivate", JSON.stringify(videoId));
     }
 }

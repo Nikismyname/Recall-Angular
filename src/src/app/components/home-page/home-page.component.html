@@ -1,3 +1,51 @@
-<p>
-  Full Deploy Successfult!
-</p>
+<div *ngIf="authService.user$ | async as user">
+  <div *ngIf="user.isUser else notLoggedIn">
+    <h1>How to start taking notes in the Web App?</h1>
+    <h5>
+      Navigate to Videos. Click Start Video Notes. 
+      Select Wheather you would like YouTube, Vimeo or local Video.   
+      For YouTube and Vimeo copy the url of the video you want and paste it in the Url input.
+      Click the play button to the right of the Url. If the right video plays, fill the name and 
+      description (optional) and click save. Now you should see the wideo in its forlder. 
+      Click the video and start taking notes.
+      If you want a local video just fill the name and save. You will have to manually select 
+      the video every time you take notes on it, because you can not save the local Url 
+      through a browser for security reasons. 
+    </h5>
+    <h1>How to start taking notes on the desktop App?</h1>
+    <h5>
+      YouTube and Vimeo work the same way. 
+      The path to local videos can now be accessed and saved. Click the button to the right of the Url
+      and select the wanted local video.  
+    </h5>
+    <h1>Ho to use the extension?</h1>
+    <h5>
+      For the extension to work you need to have Recall open in the browse. 
+      Install the extention [[how]].
+      Just once after the install refresh the App as well as the YouTube or Vimeo pages that were open 
+      before the insall.
+      Go to the page of Vimeo or Youtube video and click on the extension. 
+      Now there are three options: <br/> 
+      &nbsp;&nbsp;&nbsp;&nbsp; <span class="emp">Add To Current Directory</span> - for thing to work you need Recall App to be open on a certain directory. 
+      It will automatically create a Recall video in that directory.<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp; <span class="emp">Add To Root Directory</span> - as you might guess it will create Recall App to the root directory. 
+      For thins the Recall app needs to be open but there are no other requirements. <br/>
+      &nbsp;&nbsp;&nbsp;&nbsp; <span class="emp">Choose Directory Later</span> - will save the information for the video and you can later click on 
+      Import Videos and manually select the directory you want to put it in.
+    </h5>
+  </div>
+</div>
+
+<ng-template #notLoggedIn>
+  <h1>Welcome to Recall</h1>
+  <h5>
+    A place take notes on videos. We support YouTube,
+    Vimeo as well as videos on your computer.
+  </h5>
+  <h5>
+    <p>There is also chrome extension, as well as a desktop app you can use!</p>
+    The extension lets you add Vimeo and Youtube videos to Recall with two clicks. 
+    The desktop app lets you save the location of a local video without having to select it manualy 
+    every time as in the Web App.
+  </h5>
+</ng-template>

@@ -5,9 +5,9 @@
   [contextMenu]="basicMenu"
 >
   <div class="card-body">
-    <h6 Name="card-title">{{video.name}}</h6>
-    <h6 Name="card-title">Notes: {{video.noteCount}}</h6>
-    <h6 Name="card-title">{{this.calculatePercentWatched()}}</h6>
+    <h6 class="card-title">{{video.name}}</h6>
+    <h6 class="card-title">Notes: {{video.noteCount}}</h6>
+    <h6 class="card-title">{{this.calculatePercentWatched()}}</h6>
   </div>
 </div>
 
@@ -15,12 +15,22 @@
   <ng-template contextMenuItem (execute)="delete()">
     Delete
   </ng-template>
+
   <ng-template contextMenuItem divider="true"></ng-template>
   <ng-template contextMenuItem (execute)="move()">
     Move
   </ng-template>
+
   <ng-template contextMenuItem divider="true"></ng-template>
   <ng-template contextMenuItem (execute)="makeConnection()">
     Make Connection
   </ng-template>
+
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem [visible]="video.public===true" (execute)="makePrivate()">
+      Make Private
+  </ng-template>
+  <ng-template contextMenuItem [visible]="video.public===false" (execute)="makePublic()">
+      Make Public
+    </ng-template>
 </context-menu>

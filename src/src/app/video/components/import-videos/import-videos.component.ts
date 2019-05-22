@@ -145,7 +145,7 @@ export class ImportVideosComponent {
   }
 
   onClickApproveVideo(videoId: number, dirId: number) {
-    this.videoService.ConvertExtensionVideo({
+    this.videoService.convertExtensionVideo({
       shouldAdd: true, 
       extensionVideoId: videoId,
       parentDirId: dirId,
@@ -160,7 +160,7 @@ export class ImportVideosComponent {
   } 
 
   onClickDeleteVideo(videoId: number) { 
-    this.videoService.ConvertExtensionVideo({
+    this.videoService.convertExtensionVideo({
       shouldAdd: false, 
       extensionVideoId: videoId,
       parentDirId: 0,

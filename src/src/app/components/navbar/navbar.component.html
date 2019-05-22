@@ -24,8 +24,14 @@
           </li>
 
           <li *ngIf="user.isUser" class="nav-item">
-              <a [routerLink]="[routePaths.optionsPath]" class="nav-link no-text-selection">Options</a>
-            </li>
+            <a [routerLink]="[routePaths.optionsPath]" class="nav-link no-text-selection">Options</a>
+          </li>
+          <li *ngIf="user.isUser" class="nav-item">
+            <a [routerLink]="[routePaths.adminViewPath]" class="nav-link no-text-selection">Admin View</a>
+          </li>
+          <li *ngIf="user.isUser" class="nav-item">
+            <a [routerLink]="[routePaths.publicViewPath]" class="nav-link no-text-selection">Public View</a>
+          </li>
         </ul>
 
         <ul class="navbar-nav ml-auto">

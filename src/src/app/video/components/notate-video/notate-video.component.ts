@@ -26,24 +26,15 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
   NoteType = NoteType;
 
   showVideoFields: boolean = true;
-
   videoInitiaLoadDone: boolean = false;
-
   notes: INoteInternal[] = [];
   token: string = "";
-
   video: IVideoEdit = <IVideoEdit>{ url: "", name: "", description: "", isVimeo: false, isYouTube: true, isLocal: false };
-
   isPlaying: boolean = false;
-
   subNoteInfo: number[] = [null, null, null];
-
   autoSaveInterval: NodeJS.Timer;
-
   saveTime: number = 10;
-
   shouldShowOptions: boolean = false;
-
   options = {
     shouldAutoSave: false,
   };
@@ -180,7 +171,7 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
       level: level,
       deleted: false,
       type: type,
-      seekTo:Math.trunc(await this.player.getCurrentTime()),
+      seekTo: Math.trunc(await this.player.getCurrentTime()),
       backgroundColor: c.secondaryColor,
       textColor: "white",
       borderColor: borderColor,
@@ -205,7 +196,10 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
   }
 
   async save() {
-    await this.setFieldsForSave();
+    if (!await this.setFieldsForSave()) {
+      console.log("set Fields Returned false Save");
+      return;
+    }
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -230,7 +224,10 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
   }
 
   async autoSave() {
-    await this.setFieldsForSave();
+    if (!await this.setFieldsForSave()) {
+      console.log("set Fields Returned false autoSave");
+      return;
+    }
 
     let result = this.notateService.save(this.video);
     if (result === null) {
@@ -254,6 +251,7 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
             this.notateService.setIdsToPrevious(newIds);
           },
           error => {
+            console.log("Auto Save Error!", error);
             this.toastr.error("Partial Save Failed!", "Error");
           },
         );
@@ -261,18 +259,28 @@ export class NotateVideoComponent implements OnInit, OnDestroy {
   }
 
   async setFieldsForSave() {
-      let playerSeekTo = Math.trunc(await this.player.getCurrentTime());
-      console.log("CURRENT TIME", playerSeekTo);
-      let seekDiference = this.video.seekTo - playerSeekTo;
-      if (Math.abs(seekDiference) > 2) {
-        this.video.seekTo = playerSeekTo;
-      }
+    if (
+      !this.player
+      || (this.video.isLocal && !this.player.localPlayer)
+      || (this.video.isYouTube && !this.player.youTubePlayer)
+      || (this.video.isVimeo && !this.player.vimeoPlayer)
+    ) {
+      this.toastr.info("No Changes To Save!", "Player Not Set");
+      this.location.back();
+      return false;
+    }
+    let playerSeekTo = Math.trunc(await this.player.getCurrentTime());
+    console.log("CURRENT TIME", playerSeekTo);
+    let seekDiference = this.video.seekTo - playerSeekTo;
+    if (Math.abs(seekDiference) > 2) {
+      this.video.seekTo = playerSeekTo;
+    }
 
-      let duration = Math.trunc(await this.player.getDuration());
-      if (typeof duration === "number") {
-        this.video.duration = duration;
-      }
-    // }
+    let duration = Math.trunc(await this.player.getDuration());
+    if (typeof duration === "number") {
+      this.video.duration = duration;
+    }
+    return true;
   }
 
   onFileSelected(e) {// for video player

@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { AuthStoreService } from 'src/app/services/data-services/auth-store.service';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.css']
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent {
 
-  constructor() { }
-
-  ngOnInit() {
-  }
+  constructor(
+    public authService: AuthStoreService,
+  ) { }
 
 }

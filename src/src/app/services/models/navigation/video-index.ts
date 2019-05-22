@@ -13,4 +13,6 @@ export interface IVideoIndex {
     seekTo: number;
 
     duration: number;
+
+    public: boolean;
 }

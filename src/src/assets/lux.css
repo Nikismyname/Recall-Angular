@@ -4873,6 +4873,7 @@ input[type="button"].btn-block {
   color: #fff;
 }
 
+/* Text White Background Black */
 .card {
   position: relative;
   display: -webkit-box;
@@ -4884,10 +4885,11 @@ input[type="button"].btn-block {
           flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
   background-clip: border-box;
   border: 1px solid rgba(0, 0, 0, 0.125);
   border-radius: 0;
+  background-color: #1a1a1a;
+  color: white !important;
 }
 
 .card > hr {

@@ -6,6 +6,7 @@ import { ImportVideosComponent } from './components/import-videos/import-videos.
 import { ExtensionVideoImportGuard } from '../services/guards/extension-video-import';
 import { MakeConnectionComponent } from './components/make-connection/make-connection.component'; 
 import { UserGuard } from '../services/guards/user.gourd';
+import { VideoViewComponent } from './components/video-view/video-view.component'; 
 
 const routes: Routes = [
     {
@@ -17,6 +18,10 @@ const routes: Routes = [
         path: "note/:id",
         component: NotateVideoComponent,
         canActivate: [UserGuard]
+    },
+    {
+        path: "view/:id",
+        component: VideoViewComponent,
     },
     {
         path: "import",

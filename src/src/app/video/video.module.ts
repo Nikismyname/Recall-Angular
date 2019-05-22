@@ -33,6 +33,7 @@ import { TooltipModule } from 'ng2-tooltip-directive';
 import { VimeoPlayerComponent } from './components/vimeo-player/vimeo-player.component';
 
 import {AngularFittextModule} from 'angular-fittext';
+import { VideoViewComponent } from './components/video-view/video-view.component';
 
 const components = [
   CreateVideoComponent,
@@ -49,7 +50,7 @@ const components = [
 ]; 
 
 @NgModule({
-  declarations: [...components],
+  declarations: [...components, VideoViewComponent],
   imports: [
     CommonModule,
     VideoRoutingModule,
